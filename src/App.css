@@ -1,0 +1,169 @@
+/* Stile generale del contenitore di gioco */
+.game-container {
+  max-width: 1280px; /* Imposta una larghezza massima */
+  margin: 0 auto; /* Centra il contenitore */
+  font-family: sans-serif;
+  padding: 2rem;
+  text-align: center;
+}
+
+/* Layout principale a due pannelli (50% ciascuno) */
+.main-layout {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  margin-top: 20px;
+}
+
+.left-pane,
+.right-pane {
+  width: 50%;
+  padding: 10px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Area di gioco all'interno del pannello sinistro */
+.game-area {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: 40px; /* Spazio tra le colonne */
+}
+
+.board-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.info-column {
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: flex-start;
+}
+
+.game-info {
+  font-size: 1.2em;
+  font-weight: bold;
+  min-height: 1.5em; /* Assicura altezza stabile */
+}
+
+.new-game-button {
+  padding: 10px 20px;
+  font-size: 1em;
+  cursor: pointer;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  background-color: #f0f0f0;
+}
+
+/* Stili per il Tab Panel */
+.tab-panel {
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: #fff;
+  color: #213547;
+  display: flex;
+  flex-direction: column;
+  max-height: 700px; /* Imposta un'altezza massima fissa */
+  overflow: hidden; /* Nasconde lo scroll del contenitore principale */
+}
+
+.tab-buttons {
+  display: flex;
+  background-color: #f0f0f0;
+  border-bottom: 1px solid #ccc;
+}
+
+.tab-button {
+  padding: 10px 20px;
+  cursor: pointer;
+  border: none;
+  background-color: transparent;
+  font-size: 1em;
+  border-right: 1px solid #ccc;
+  color: #213547;
+}
+
+.tab-button:last-child {
+  border-right: none;
+}
+
+.tab-button.active {
+  background-color: #fff;
+  border-bottom: 1px solid #fff; /* Nasconde il bordo inferiore del contenitore */
+  font-weight: bold;
+}
+
+.tab-content {
+  flex-grow: 1; /* Occupa lo spazio rimanente */
+  overflow-y: auto; /* Aggiunge lo scroll verticale se il contenuto è troppo lungo */
+  display: flex; /* Per far sì che il contenuto si adatti */
+}
+
+.tab-content-pane {
+  padding: 20px;
+  text-align: left;
+}
+
+/* Rimuovi il padding quando il contenuto è il syntax highlighter per evitare doppi spazi */
+.tab-content > div:not(.tab-content-pane) {
+  width: 100%; /* Assicura che SyntaxHighlighter occupi tutto lo spazio */
+  margin: 0;
+}
+
+.code-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.copy-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1;
+  padding: 5px 10px;
+  background-color: #e0e0e0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.prompt-content {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  background-color: #f5f5f5;
+  padding: 15px;
+  border-radius: 4px;
+  font-family: monospace;
+  height: 100%;
+  box-sizing: border-box;
+  text-align: left;
+  font-size: 0.9em;
+  color: #213547;
+}
+
+@media (prefers-color-scheme: dark) {
+  .prompt-content {
+    background-color: #2c2c2c;
+    color: #f0f0f0;
+  }
+  .copy-button {
+    background-color: #3a3a3a;
+    border-color: #555;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
