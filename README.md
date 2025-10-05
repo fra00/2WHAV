@@ -1,45 +1,136 @@
-# 📘 Standard Tecnico e Guida Pratica: Il Framework 2V.G.I.A. (Generalizzato)
+Chiedere ad un'Intelligenza Artificiale (come un LLM) di scrivere del codice complesso che rispetti le tue regole di architettura o strategia e si interfacci con un ambiente reale è difficile.
 
-Chiedere ad un'Intelligenza Artificiale (come un LLM) di scrivere del codice complesso che rispetti le tue **regole di architettura o strategia** e si interfacci con un ambiente reale è difficile.
+Il framework 2WHAV (What → Where → How → Augment → Verify) è un metodo di progettazione dei prompt che nasce proprio per risolvere questo problema.
 
-Il framework **2V.G.I.A.** (Virtualizzazione, Generazione, Interfaccia, Augmentation, Verification) nasce proprio per risolvere questo problema. Non è solo un modo per scrivere le istruzioni, ma un vero e proprio **Contratto di Lavoro** che tu, come utente, stipuli con l'AI.
+Serve a standardizzare come si scrivono prompt complessi, il suo scopo principale è eliminare le "zone grigie" (l'effetto pratico è che il modello ha meno ambiguità, risponde in modo più coerente, e produce risultati più prevedibili) nella generazione del codice. Una volta stabilite chiaramente le regole, le priorità e gli ambienti , l'LLM è in grado di generare virtualmente un'ampia gamma di codice complesso in modo conforme alle specifiche solo cambiando le richieste (sezione WHAT e API).
 
-Il suo scopo principale è eliminare le **"zone grigie"** nella generazione del codice. Una volta che il framework ha stabilito chiaramente le regole, le priorità e gli ambienti virtuali, l'LLM è in grado di generare **qualunque tipo di codice** in modo rigoroso e conforme alle specifiche.
+Non può imporre vincoli tecnici all'LLM, ma offre una struttura progettuale che riduce le ambiguità e aumenta la coerenza del comportamento generativo sepcificando:
 
-Il 2V.G.I.A. obbliga l'AI a seguire regole rigorose in quattro aree chiave:
+Dove Gira (Virtualizzazione): Virtualizza il sistema in cui dovrà interagire e, crucialmente, definisci le regole della macchina a stati o di qualsiasi altra architettura di controllo che dovrà contenere il codice. Stabilisci anche l'ordine di priorità delle sue decisioni.
 
-- **Cosa fare (Virtualizzazione):** **Virtualizza il sistema** in cui dovrà interagire e stabilisci l'ordine di priorità delle sue decisioni
-- **Come farlo (Generazione e Interfaccia):** Spiega le **regole di scrittura del codice** e come dovrà interagire con il tuo mondo (tramite precise API e sintassi)
-- **L'intelligenza in più (Augmentation):** Vai oltre la richiesta di base e costringi l'AI a dimostrare **pensiero strategico avanzato**.
-- **Prova che hai fatto bene (Verification):** L'AI deve **autocontrollare** il suo codice rispetto a ogni singola regola del contratto prima di consegnarlo.
+Come farlo (Generazione e Interfaccia): Spiega le regole di scrittura del codice e come dovrà interagire con il tuo mondo (tramite precise API e sintassi)
 
-In pratica, il **2V.G.I.A.** trasforma un'istruzione vaga ("Scrivi un bot") in un **disciplinare ingegneristico dettagliato**, assicurando che l'output sia non solo corretto, ma anche strutturalmente robusto e conforme ai tuoi standard professionali.
+L'intelligenza in più (Augmentation): vai oltre la richiesta di base e richiedi all'AI di dimostrare pensiero strategico avanzato.
 
-## 2V.G.I.A.
+Prova che hai fatto bene (Verification): L'AI deve autocontrollare il suo codice rispetto a ogni singola regola del contratto prima di consegnarlo.
 
-Il **2V.G.I.A.** (Virtualizzazione, Generazione, Interfaccia, Augmentation, Verification) è un **Contratto di Prompt Engineering** rigoroso, progettato per ottenere output di codice dagli LLM che siano totalmente aderenti alle specifiche. Il framework segue il flusso logico **"What -> How -> Verify"**.
+In pratica, il 2WHAV trasforma un'istruzione vaga ("Scrivi un bot") in un disciplinare ingegneristico dettagliato, dando le informazioni per un output non solo corretto, ma anche strutturalmente robusto e conforme ai tuoi standard professionali.
 
-## I. Nota di Generalizzazione ⚠️
+2WHAV
+Il 2WHAV (Virtualizzazione, Generazione, Interfaccia, Augmentation, Verification) è una struttura di Prompt Engineering rigorosa, progettata per massimizzare l'aderenza degli output alle specifiche. Il framework segue il flusso logico "What → Where → How → Augment → Verify".
 
-**Nota Importante:** Gli esempi di codice (Motori Decisionali, API, o _scaffolding_) forniti in questa guida sono **puramente illustrativi**. L'architettura di controllo (**Motore Decisionale** o **Modello Comportamentale**) e le **API effettive** devono essere definite in base al **dominio specifico** (es. Logistica, Trading, Giochi) richiesto nel prompt. Per coerenza, gli esempi concreti utilizzano **JavaScript**.
+Schema del Framework:
 
----
+1. SCOPO - What? (Cosa vuoi?) • Componente: # What First • Scopo: Definisce l'obiettivo, il ruolo dell'AI e il formato di output atteso.
 
-## II. WHAT: Introduzione e Obiettivo (Cosa)
+2. AMBIENTE - Where? (Dove gira?) • Componente: Virtualizzazione (V1) • Scopo: Definisce l'architettura interna (es. FSM o qualsiasi altra struttura) e l'ordine di priorità decisionale (Gerarchia).
 
-Questa fase definisce l'obiettivo principale e il ruolo dell'LLM.
+3. COSTRUZIONE - How? (Come lo scrivi?) • Componenti: Generazione + Interfaccia • Scopo: Stabilisce lo scaffolding, le regole di sintassi e le API di comunicazione.
 
-| Componente       | Scopo                                                                  | Logica |
-| ---------------- | ---------------------------------------------------------------------- | ------ |
-| **# What First** | Definisce l'**obiettivo finale** e il ruolo dell'LLM.                  | WHAT   |
-| **# Indice**     | Fornisce la **mappa di navigazione** e valida la struttura del prompt. | WHAT   |
+4. STRATEGIA - Augment? (Aggiungi valore?) • Componente: Augmentation • Scopo: Richiede l'intelligenza avanzata: ottimizzazione, logica predittiva e complessità strategica.
 
-### Esempio Pratico (Inizio del Prompt - JS)
+5. CONTROLLO - You Did Well? (Controllo QA) • Componente: Verification (V2) • Scopo: Richiede l'autocontrollo rigoroso (la Checklist) su tutti i requisiti stabiliti.
 
-Markdown
+Ingrandisci immagine
+Modifica immagine
+Elimina immagine
 
-```
-# 🚀 2V.G.I.A. Prompt: Agente Decisionale Logistico v1.0 (JavaScript) 🚀
+Aggiungi un sottotitolo (facoltativo)
+flowchart LR
+    U["Utente"] --> FW["Framework 2WHAV"]
+    FW --> L["LLM"]
+    L --> FW
+    FW --> U
+
+    subgraph FW ["Framework 2WHAV"]
+        V1["Virtualization"]
+        G1["Generation"]
+        I1["Interface"]
+        A1["Augmentation"]
+        V2["Verification"]
+        V1 --> G1 --> I1 --> A1 --> V2
+    end
+
+I. Nota di Generalizzazione ⚠️
+Nota Importante: Gli esempi di codice (Motori Decisionali, API, o scaffolding) forniti in questa guida sono puramente illustrativi. L'architettura di controllo (Motore Decisionale o Modello Comportamentale) e le API effettive devono essere definite in base al dominio specifico (es. Logistica, Trading, Giochi) richiesto nel prompt. Per coerenza, gli esempi concreti utilizzano JavaScript.
+
+
+🚀 Esempio Rapido: Il Problema che 2WHAV Risolve
+Obiettivo: Creare una funzione che validi un'email tramite API esterna, con retry automatico in caso di errore.
+
+❌ Prompt Tradizionale (Ambiguo)
+Scrivi una funzione JavaScript che validi un'email chiamando un'API. 
+Deve riprovare se fallisce.
+Cosa manca?
+
+Quante volte riprovare? (2? 3? 10?)
+
+Con quale strategia? (backoff esponenziale? delay fisso?)
+
+Cosa restituire se fallisce del tutto?
+
+Quale sintassi? (async/await? Promises? callback?)
+
+Risultato: L'LLM deve indovinare, producendo codice che probabilmente non rispetta le tue aspettative.
+
+
+✅ Con 2WHAV (Contratto Chiaro)
+# Validatore Email con Retry
+
+## WHAT: Obiettivo
+Crea una funzione async `validateEmail(email)` che validi un indirizzo 
+email tramite API esterna. In caso di errore, deve riprovare fino a 3 volte 
+con backoff esponenziale (100ms, 200ms, 400ms).
+
+Output: Oggetto `{ valid: boolean, attempts: number, error?: string }`
+
+## HOW: Regole (G)
+- OBBLIGATORIO: Sintassi `async function validateEmail(email) { ... }`
+- OBBLIGATORIO: Usa try/catch per ogni tentativo
+- VIETATO: Usare setTimeout (usa solo delay sincrono per semplicità)
+
+## HOW: API (I)
+Puoi chiamare SOLO:
+- `api.checkEmail(email)` → Promise<boolean> (può rigettare con Error)
+
+## AUGMENT: Intelligenza Extra (A)
+Oltre al retry base, implementa:
+1. Log di ogni tentativo fallito con `console.warn()`
+2. Se tutti i tentativi falliscono, includi il messaggio d'errore nell'output
+
+## VERIFY: Checklist (V)
+- [ ] Funzione async?
+- [ ] Esattamente 3 tentativi?
+- [ ] Backoff esponenziale (100ms, 200ms, 400ms)?
+- [ ] Restituisce `{ valid, attempts, error? }`?
+- [ ] Log dei fallimenti implementato?
+Risultato: Zero ambiguità. L'LLM genera codice preciso, conforme e senza bisogno di iterazioni correttive.
+
+II. WHAT: Introduzione e Obiettivo (Cosa)
+Questa fase costituisce la dichiarazione di intenti e stabilisce lo scopo. Definisce cosa vuoi, il risultato finale esatto che deve essere prodotto e lo scopo principale del prompt.
+
+Il WHAT specifica cosa l'LLM dovrà fare utilizzando tutte le fasi successive (HOW, Augmentation e Verification). Per questo motivo, questa sezione deve essere la più specifica possibile, includendo:
+
+Ruolo e Competenza: L'assegnazione del ruolo esatto all'LLM (es. "Sei un Ingegnere Senior in JavaScript").
+
+Vincoli di Flusso: Se esistono vincoli operativi o un flusso principale (ad esempio, "Il sistema deve prioritizzare la lettura dati prima di qualsiasi scrittura").
+
+Regole e Vincoli Iniziali: Qualsiasi regola o vincolo sul funzionamento generale necessario per raggiungere il risultato finale.
+
+Formato di Output: La specifica del formato richiesto (es. "SOLO codice JavaScript in un oggetto letterale unico").
+
+Nota: Sii chiaro e dettagliato nello specificare lo scopo , più specifico è il dettaglio del tuo scopo e migliori saranno i risultati
+
+Componenti del WHAT:
+
+• # What First - Scopo: Definisce l'obiettivo finale e il ruolo dell'LLM (Logica: WHAT)
+
+• # Indice - Scopo: Fornisce la mappa di navigazione e valida la struttura del prompt (Logica: WHAT)
+
+Nota: L'indice nei prompt lunghi è importante perchè facilita l' LLM a orientarsi e stabilire una mappa mentale chiara del documento
+
+Esempio Pratico (Inizio del Prompt - JS)
+# 🚀 2WHAV Prompt: Agente Decisionale Logistico v1.0 (JavaScript) 🚀
 
 ## 1. WHAT: Introduzione e Indice
 
@@ -50,59 +141,68 @@ L'output **DEVE** essere **SOLO** codice **JavaScript** formattato in un **Ogget
 ### # Indice
 | Sezione | Logica | Scopo |
 | :--- | :--- | :--- |
-| **\# Virtualizzazione (V)** | HOW | Modello Comportamentale e Priorità del Flusso. |
-| **\# Generazione (G)** | HOW | Regole di sintassi e scaffolding. |
-| **\# Interfaccia (I)** | HOW | Documentazione API. |
-| **\# Augmentation (A)** | HOW | Direttive strategiche e creative. |
-| **\# Verification (V)** | VERIFY | Checklist di conformità finale. |
-```
+| **\# 1. Virtualizzazione (V)** | HOW | Modello Comportamentale e Priorità del Flusso. |
+| **\# 2. Generazione (G)** | HOW | Regole di sintassi e scaffolding. |
+| **\# 3. Interfaccia (I)** | HOW | Documentazione API. |
+| **\# 4. Augmentation (A)** | HOW | Direttive strategiche e creative. |
+| **\# 5. Verification (V)** | VERIFY | Checklist di conformità finale. |
 
----
-
-## III. HOW: Virtualizzazione, Generazione, Interfaccia, Augmentation (Come)
-
+III. Virtualizzazione, Generazione, Interfaccia, Augmentation (Come)
 Questa fase definisce tutte le regole operative per l'esecuzione del compito.
 
-### 2. V: Virtualizzazione (Modello Comportamentale)
+2. V (Where): Virtualizzazione (Modello Comportamentale)
+Definisce il modello logico che il codice deve implementare. Questa fase è dove l'LLM viene istruito non solo sul tipo di codice, ma sulla sua architettura interna di controllo. Invece di fornire all'LLM l'intero codice dell'ambiente di destinazione, la virtualizzazione ne descrive il contesto di esecuzione e le regole astratte. Ad esempio, si specifica chiaramente che il codice deve essere una Macchina a Stati Finiti (FSM), un Albero Comportamentale (Behaviour Tree) o un set di regole, definendo la struttura che l'LLM dovrà popolare. Questo permette all'LLM di comprendere a fondo come il codice generato verrà utilizzato, ottimizzando il resto delle nozioni fornite nel prompt. Qui si stabilisce l'ordine gerarchico e la priorità assoluta delle sue decisioni. Indica qui la descrizione completa del modello operativo: non solo l'architettura (es. FSM), ma anche il ciclo di esecuzione, il flusso dei dati e le priorità decisionali.
 
-Definisce il modello logico che il codice deve implementare.
+Componente della Virtualizzazione:
 
-| Componente               | Scopo                                                                                                     | Requisito Critico                                                                                   |
-| ------------------------ | --------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| **Contratto del Flusso** | Stabilisce l'**architettura di controllo** (es. FSM, Behaviour Tree, ecc.) e la priorità delle decisioni. | Il modello è un **Motore Decisionale** con priorità di valutazione (es. Urgenza -> Pianificazione). |
+• Specifica del Flusso
 
-#### Esempio Pratico (Motore Decisionale FSM Illustrativo - JS)
+Scopo: Stabilisce l'architettura di controllo (es. FSM, Behaviour Tree, ecc.) e la priorità delle decisioni.
 
-Markdown
+Requisito Critico: Il modello è un Motore Decisionale con priorità di valutazione (es. Urgenza -> Pianificazione).
 
-```
+Esempio Pratico (Motore Decisionale FSM Illustrativo - JS)
 ## 2. HOW: V: Virtualizzazione (Modello Comportamentale)
 
-### Contratto del Motore Decisionale
-Il Motore Decisionale (qui illustrato come FSM per chiarezza) deve valutare le sue logiche in **questo ordine di priorità inviolabile**:
-1.  **URGENZA (Max Priority):** Logiche di sicurezza o critiche (es. 'Evita Collisione').
-2.  **PIANIFICAZIONE (High Priority):** Sequenze di azioni per completare un compito (es. 'Movimento Verso Area').
-3.  **STANDARD (Normal Priority):** Logiche di attesa o monitoraggio.
-```
+### Specifica del Motore Decisionale
+- Il Motore Decisionale (qui illustrato come FSM per chiarezza) deve valutare le sue logiche in **questo ordine di priorità inviolabile**:
+    1.  **URGENZA (Max Priority):** Logiche di sicurezza o critiche (es. 'Evita Collisione').
+    2.  **PIANIFICAZIONE (High Priority):** Sequenze di azioni per completare un compito (es. 'Movimento Verso Area').
+    3.  **STANDARD (Normal Priority):** Logiche di attesa o monitoraggio.
+- buildContext() viene chiamato prima di ogni ciclo decisionale
+- buildContext() valorizza context.x, context.y, context.z
+- Gli stati ricevono context.delta e context.gamma come input
+- Le transizioni valutano prima le condizioni di livello superiore
+3. G (How): Generazione (Regole e Scaffolding COMPLETO)
+Questa fase stabilisce le regole inderogabili per la scrittura del codice. Il suo obiettivo è duplice: imporre standard per un codice pulito e robusto e definire i flussi obbligatori e le limitazioni tecniche necessarie per l'integrazione. L'LLM riceve qui lo scaffolding esatto che deve popolare e le regole sintattiche che deve rispettare, come l'obbligo di usare una specifica convenzione di denominazione o il divieto di usare funzioni moderne non supportate.
 
-### 3. G: Generazione (Regole e Scaffolding COMPLETO)
+⚠️ Nota Critica:
 
-| Componente          | Scopo                                                                                             | Requisito Critico                                                                                            |
-| ------------------- | ------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| **Regole Generali** | Impone standard di stile e compatibilità tecnica.                                                 | **OBBLIGATORIO:** Solo `function(...) {}` (vietate `=>`). Accesso Helper SOLO tramite `agentLogic.helper()`. |
-| **Scaffolding**     | Fornisce lo **scheletro esatto** e i formati obbligatori per le strutture del Motore Decisionale. | Deve essere compatibile con l'architettura scelta (Oggetto, FSM, BT, ecc.).                                  |
+Questa fase contiene le regole più critiche per la generazione del codice. Nel prompt, queste regole devono essere comunicate con linguaggio prescrittivo forte (OBBLIGATORIO, VIETATO) per massimizzare l'aderenza dell'LLM. La non conformità a queste regole compromette significativamente l'integrazione del codice generato.
 
-#### Esempio Pratico (Scaffolding JavaScript)
+Componenti della Generazione:
 
-JavaScript
+• Regole Generali
 
-```
+Scopo: Impone standard di stile e compatibilità tecnica.
+
+Requisito Critico: Es: OBBLIGATORIO: Solo function(...) {} (vietate =>). Accesso Helper SOLO tramite agentLogic.helper().
+
+• Scaffolding
+
+Scopo: Fornisce lo scheletro esatto e i formati obbligatori per le strutture del Motore Decisionale.
+
+Requisito Critico: Es: Deve essere compatibile con l'architettura scelta (Oggetto, FSM, BT, ecc.).
+
+Esempio Pratico (Scaffolding JavaScript)
+⚠️ NOTA: Le regole seguenti (es. divieto di arrow functions) sono specifiche per questo esempio di sistema embedded. Nel TUO prompt, definisci SOLO le regole necessarie al TUO ambiente/standard.
+
 ## 3. HOW: G: Generazione (Regole e Scaffolding COMPLETO)
 
 ### Regole Generali di Generazione del Codice
 * **Sintassi delle Funzioni:** È **OBBLIGATORIO** utilizzare `function(...) { ... }`. **VIETATO UTILIZZARE FUNZIONI LAMBDA (`=>`)**.
 
-### Scaffolding del Codice (CONTRATTO INVIOLABILE)
+### Scaffolding del Codice (Template Obbligatorio)
 const agentLogic = {
   initialState: 'IDLE',
   memory: { /* Dati persistenti */ },
@@ -125,21 +225,20 @@ const agentLogic = {
     return false;
   }
 };
-```
+4. I (HOW): Interfaccia (Protocollo di Interazione)
+Questa fase definisce gli unici mezzi con cui il codice può interagire con il sistema esterno. Lo scopo non è solo elencare le funzioni, ma documentarle con precisione assoluta: tipi di input e output, eccezioni gestite e comportamenti specifici. L'LLM deve trattare questo Protocollo di Interazione come un contratto API inviolabile e non può in alcun modo invocare funzioni o metodi non esplicitamente definiti in questa sezione.
 
-### 4. I: Interfaccia (Protocollo di Interazione)
+Componente dell'Interfaccia:
 
-Definisce gli unici mezzi con cui il codice può interagire con il sistema.
+• API Table
 
-| Funzione      | Input                                   | Output                                                              | Requisito Critico |
-| ------------- | --------------------------------------- | ------------------------------------------------------------------- | ----------------- |
-| **API Table** | Documenta ogni funzione di interazione. | Il codice generato **NON DEVE** usare chiamate API non documentate. |                   |
+Scopo: Documenta ogni funzione di interazione.
 
-#### Esempio Pratico
+Output: Il codice generato NON DEVE usare chiamate API non documentate.
 
-Markdown
+Requisito Critico: [specificato nelle API documentate]
 
-```
+Esempio Pratico
 ## 4. HOW: I: Interfaccia (API di Interazione)
 Il codice interagisce SOLO tramite l'oggetto `api`:
 
@@ -148,62 +247,131 @@ Il codice interagisce SOLO tramite l'oggetto `api`:
 | `api.getLocation()` | void | `object` {x, y} | Posizione corrente dell'agente. |
 | `api.requestPath(target)` | `object` {x, y} | `boolean` | Richiede un percorso; **FALLIBILE**. |
 | `api.loadItem(item_id)` | `string` | `boolean` | Tenta di caricare un oggetto. |
-```
+5. A (Augment): Augmentation (Direttive Strategiche)
+Questa fase richiede all'LLM di implementare logiche avanzate oltre il requisito minimo specificato nel WHAT. L'obiettivo è ottenere codice non solo funzionale, ma ottimizzato, resiliente e strategicamente robusto.
 
-### 5. A: Augmentation (Direttive Strategiche)
+L'Augmentation specifica esplicitamente:
 
-Spinge l'LLM a contribuire strategicamente e ad andare oltre i requisiti minimi.
+Meccanismi di ottimizzazione (es. costo opportunità, caching)
 
-| Componente               | Scopo                                       | Direttiva Strategica                                                                |
-| ------------------------ | ------------------------------------------- | ----------------------------------------------------------------------------------- |
-| **Creativity Directive** | Inietta intelligenza e complessità tattica. | Richiede l'implementazione di logiche avanzate non esplicitate nello _scaffolding_. |
+Logiche di resilienza (es. retry, fallback, validazione)
 
-#### Esempio Pratico
+Funzionalità preventive (es. risk assessment, anomaly detection)
 
-Markdown
+Queste logiche devono essere richieste esplicitamente in questa sezione, anche se non erano menzionate nel WHAT iniziale.
 
-```
+Componente dell'Augmentation:
+
+• Creativity Directive
+
+Scopo: Inietta intelligenza e complessità tattica.
+
+Direttiva Strategica: Richiede l'implementazione di logiche avanzate non esplicitate nello scaffolding.
+
+Esempio Pratico
 ## 5. HOW: A: Augmentation (Direttive Strategiche)
 
-**CREATIVITY DIRECTIVE:** L'LLM deve implementare un sistema di **caching della memoria** per le posizioni critiche e deve calcolare un **costo opportunità** per ogni compito, non solo il percorso più breve.
-```
+**CREATIVITY DIRECTIVE:**
+L'LLM DEVE implementare logiche che vanno oltre la risoluzione del compito base ("vai a X e carica Y"):
 
----
+1.  **OTTIMIZZAZIONE STRATEGICA:** Non calcolare solo il percorso più breve, ma implementare un sistema che valuti il **costo opportunità** per ogni compito disponibile (tempo di percorrenza + priorità dell'oggetto) prima di prendere una decisione.
+2.  **RESILIENZA:** Il Motore Decisionale deve includere meccanismi di **prevenzione degli errori**, come un sistema di **caching della memoria** per le posizioni critiche o un meccanismo di *timeout* e *retry* avanzato non richiesto esplicitamente nel WHAT.
+3.  **PENSIERO CRITICO:** Aggiungi un metodo helper (`agentLogic._calculateRisk`) che valuti il rischio di collisione basato sui dati storici.
 
-## IV. VERIFY: Verification (Verifica)
+IV. VERIFY: Verification (Verifica)
+L'ultima fase richiede all'LLM l'autoverifica del rispetto di tutti i requisiti contrattuali.
 
-L'ultima fase obbliga l'LLM all'autoverifica del rispetto di tutti i requisiti contrattuali.
+6. V (You Did Well): Verification (Controllo Qualità Finale)
+Questa fase serve come reminder finale dei requisiti più critici. La checklist viene inclusa alla fine del prompt per: - Rafforzare le regole chiave prima della generazione dell'output - Fornire un riferimento rapido per la validazione manuale - Aumentare la probabilità che l'LLM consideri questi vincoli durante la generazione Nota: Gli LLM non eseguono verifica post-generazione autonoma. La checklist influenza il processo generativo, ma la validazione finale rimane responsabilità dell'utente.
 
-### 6. V: Verification (Controllo Qualità Finale)
+Componente della Verification:
 
-| Componente    | Scopo                                            | Requisito di Verifica                                                |
-| ------------- | ------------------------------------------------ | -------------------------------------------------------------------- |
-| **Checklist** | Un riassunto dei requisiti più critici di V e G. | L'LLM deve auto-confermare la conformità prima di emettere l'output. |
+• Checklist
 
-#### Esempio Pratico
+Scopo: Un riassunto dei requisiti più critici di V e G.
 
-Markdown
+Requisito di Verifica: Reminder per l'LLM + strumento di validazione manuale per l'utente
 
-```
-## 6. VERIFY: V: Verification (Controllo Finale)
+Esempio Pratico
+Questa è l'ultima fase e funge da reminder finale dei requisiti critici. La checklist rafforza le regole chiave durante la generazione dell'output e fornisce uno strumento di validazione per l'utente. Includi questa sezione alla fine del prompt per massimizzare la probabilità che l'LLM consideri questi vincoli durante la generazione del codice.
 
-L'LLM DEVE eseguire un controllo interno sulla conformità:
+## 6. VERIFY: V: Verification (Checklist di Conformità)
+
+Prima di fornire l'output, verifica che il codice rispetti:
 * [ ] L'output è un singolo oggetto letterale JavaScript?
 * [ ] Sono state usate SOLO `function(...) {}` (no `=>`)?
 * [ ] La logica aderisce alla priorità **Urgenza** $\rightarrow$ **Pianificazione** $\rightarrow$ **Standard**?
 * [ ] È stata implementata la logica di **caching della memoria** e **costo opportunità**?
-```
+🧩 Modularità e Flessibilità del Framework 2WHAV
+Sebbene il framework 2WHAV sia stato progettato per affrontare la massima complessità, la sua architettura è intrinsecamente modulare. Non tutte le fasi sono obbligatorie in ogni scenario, permettendo di adattare il livello di rigore al compito specifico.
 
----
+Flessibilità delle Fasi:
 
-# 🎯 Esempio di Prompt Completo Unificato 2V.G.I.A. (JavaScript)
+• Virtualizzazione (V) (Where)
 
+Flessibilità: Condensabile/Omettibile
+
+Condizione per l'Omissione: Se si utilizza un'architettura o una libreria altamente nota all'LLM (es. XState o Redux), la sua definizione può essere spostata nella fase Generazione (G), usando lo scaffolding come base. Tuttavia, la Gerarchia di Priorità deve essere definita altrove.
+
+• Augmentation (A) (Augment?)
+
+Flessibilità: Facoltativa
+
+Condizione per l'Omissione: È la fase del valore aggiunto strategico. Può essere omessa se l'obiettivo è solo un codice funzionale e conforme ai requisiti minimi, senza bisogno di intelligenza tattica o prevenzione degli errori complessi.
+
+Le fasi WHAT (Scopo), HOW (Generazione/Interfaccia), e VERIFY (You Did Well?) costituiscono invece il fondamento ineliminabile del framework e devono sempre essere presenti per garantire la coerenza e la qualità dell'output.
+
+🎯 Quando Usare 2WHAV?
+Il framework è modulare: adatta le fasi alle tue esigenze. Questi esempi sono indicativi, non vincolanti.
+
+Livelli di Complessità e Fasi Suggerite:
+
+• BASSA COMPLESSITÀ
+
+Fasi suggerite: Prompt classico
+
+Esempio di applicazione: Funzione di utilità, helper semplici
+
+• MEDIA COMPLESSITÀ - LINEARE
+
+Fasi suggerite: WHAT + G + I + V
+
+Esempio di applicazione: Client API, parser, validator, data transformer
+
+• MEDIA COMPLESSITÀ - DECISIONALE
+
+Fasi suggerite: WHAT + V + G + I + V
+
+Esempio di applicazione: Retry logic con stati, workflow con branch condizionali
+
+• ALTA COMPLESSITÀ - STRATEGICA
+
+Fasi suggerite: V + G + I + A + V (completo)
+
+Esempio di applicazione: Bot con FSM, sistema multi-priorità, agente decisionale
+
+Legenda:
+
+V = Virtualizzazione (architettura decisionale con stati/priorità)
+
+G = Generazione (scaffolding e regole sintattiche)
+
+I = Interfaccia (documentazione API)
+
+A = Augmentation (ottimizzazioni e resilienza)
+
+V = Verification (checklist finale)
+
+*Nota: WHAT è sempre implicito. V (Virtualizzazione) è utile solo per sistemi con logiche decisionali complesse.
+
+🎯 Esempio di Prompt Completo Unificato 2WHAV (JavaScript)
 Questo blocco di testo è il prompt finale coeso che unisce tutte le sezioni di cui sopra.
 
-Markdown
+⚠️ Direttiva Importante per l'LLM:
 
-````
-# 🚀 2V.G.I.A. Prompt: Agente Decisionale Logistico v1.0 (JavaScript) 🚀
+ATTENZIONE: IL seguente esempio è scritto esclusivamente come materiale esplicativo e dimostrativo del framework 2WHAV e delle sue regole di applicazione. Non implementare questo codice a meno che non ti venga esplicitamente richiesto di analizzare o riassumere l'esempio specifico. Focus: valutare la struttura V→G→I→A→V, non i dettagli.
+
+# 🚀 2WHAV Prompt: Agente Decisionale Logistico v1.0 (JavaScript) 🚀
 
 ## I. Nota di Generalizzazione ⚠️
 Nota: Il Motore Decisionale FSM è qui usato come esempio astratto. Il codice finale deve essere un oggetto JavaScript.
@@ -239,7 +407,7 @@ Il Motore Decisionale (che può essere FSM, Behaviour Tree o Ruleset) deve valut
 * **Accesso Helper:** Accedi alle helper function **SOLO** tramite `agentLogic.nomeHelper()`.
 
 ### 3.2. Scaffolding del Codice (CONTRATTO INVIOLABILE)
-```javascriptconst agentLogic = {  initialState: 'IDLE', // Stato iniziale del Motore Decisionale  memory: { /* Dati persistenti */ },  CONSTANTS: {     MAX_LOAD: 500   },    updateContext: function(api, externalData) {     // DEVE restituire l'oggetto 'context' per la decisione    return {};  },    decideAction: function(api, externalData) {    // DEVE contenere la logica di valutazione della priorità 2.1    const context = agentLogic.updateContext(api, externalData);    // [Logica di esecuzione del Motore Decisionale]  },    _helperCalculateCost: function(path) {    // [Implementazione Helper]    return 0;  }};
+javascriptconst agentLogic = {  initialState: 'IDLE', // Stato iniziale del Motore Decisionale  memory: { /* Dati persistenti */ },  CONSTANTS: {     MAX_LOAD: 500   },    updateContext: function(api, externalData) {     // DEVE restituire l'oggetto 'context' per la decisione    return {};  },    decideAction: function(api, externalData) {    // DEVE contenere la logica di valutazione della priorità 2.1    const context = agentLogic.updateContext(api, externalData);    // [Logica di esecuzione del Motore Decisionale]  },    _helperCalculateCost: function(path) {    // [Implementazione Helper]    return 0;  }};
 
 
 4. HOW: I: Interfaccia (API di Interazione)
@@ -273,20 +441,291 @@ L'LLM **DEVE** verificare:
 - [ ] La logica aderisce alla priorità **Urgenza** **Pianificazione** **Standard**?
 
 - [ ] È stata implementata la logica di **caching della memoria** e **costo opportunità**?
-````
+🚦 Esempio Minimalista 2WHAV: Sistema Semaforo Intelligente (XState v5)
+⚠️ Direttiva Importante per l'LLM:
 
-## V. Esempio di Applicazione Concreta: Bot Tris (V3)
+ATTENZIONE: IL seguente esempio è scritto esclusivamente come materiale esplicativo e dimostrativo del framework 2WHAV e delle sue regole di applicazione. Non implementare questo codice a meno che non ti venga esplicitamente richiesto di analizzare o riassumere l'esempio specifico. Focus: valutare la struttura V→G→I→A→V, non i dettagli.
 
-Per dimostrare l'efficacia e la rigorosità del framework **2V.G.I.A.**, di seguito è riportato l'esempio di un prompt di alto livello che lo utilizza per un problema specifico e complesso: la creazione di un bot di Tris imbattibile.
+# 🚦 2WHAV Prompt: Sistema Semaforo Intelligente v2.0 (XState)
 
-In questo caso, il framework non è solo un _template_ astratto, ma un **contratto inviolabile** che disciplina il codice, la strategia (_Augmentation_), e la sua esecuzione (_Virtualizzazione_). L'LLM, ricevendo questo prompt, non può semplicemente generare codice, ma è obbligato a incorporare un preciso modello decisionale a priorità fissa e funzioni di difesa strategica (_findForkMove_).
+## 1. WHAT: Introduzione e Indice
 
-**RISULTATO ATTESO DALL'LLM:** Un singolo blocco di codice JavaScript completamente funzionante che implementa la logica FSM descritta, garantendo che l'ordine delle transizioni rispecchi perfettamente la gerarchia di difesa (_Blocco Vittoria_ prima di _Vittoria Propria_).
+### 1.1. What First: Scopo e Risultato Atteso
+Sei un programmatore esperto di sistemi a stati finiti. Il tuo compito è creare una **State Machine XState** per un semaforo stradale intelligente che gestisce:
+- **Ciclo normale:** Verde (30s) → Giallo (5s) → Rosso (30s) → loop
+- **Modalità emergenza:** Lampeggio giallo (override per veicoli di emergenza)
+- **Modalità manutenzione:** Tutte le luci spente (override per operazioni di manutenzione)
 
-````
+**Output Richiesto:** Codice JavaScript completo utilizzando `createMachine()` di XState v5.
+
+### 1.2. Indice
+| Sezione | Logica | Scopo |
+|---------|--------|-------|
+| **V: Virtualizzazione** | WHERE | Framework target e architettura stati |
+| **G: Generazione** | HOW | Schema XState e regole |
+| **I: Interfaccia** | HOW | API di controllo hardware |
+| **Verification** | VERIFY | Checklist di conformità |
+
+---
+
+## 2. WHERE: V: Virtualizzazione (Framework e Architettura)
+
+### 2.1. Framework Target
+**XState v5** (https://xstate.js.org/)
+
+Il codice generato deve essere compatibile con XState v5 e utilizzare:
+- `createMachine()` per definire la state machine
+- `entry` actions per azioni all'ingresso di uno stato
+- `after` per transizioni temporizzate
+- `always` per transizioni condizionali sempre attive (usate per la priorità)
+- `guards` per condizioni di transizione
+
+### 2.2. Architettura Stati
+
+
+Ciclo Normale:
+GREEN (30s) → YELLOW (5s) → RED (30s) → loop
+
+Stati Override (priorità superiore):
+EMERGENCY (lampeggio giallo - priorità alta)
+MAINTENANCE (luci spente - priorità massima)
+
+### 2.3. Gerarchia di Priorità (INVIOLABILE)
+
+La priorità viene implementata tramite **ordine di valutazione delle transizioni `always`** in XState.
+
+**In ogni stato del ciclo normale (green, yellow, red), le transizioni `always` devono essere in questo ordine:**
+
+| Ordine | Priorità | Target | Guard | Descrizione |
+|--------|----------|--------|-------|-------------|
+| 1 | **MASSIMA** | `maintenance` | `isMaintenanceMode` | Override assoluto per manutenzione |
+| 2 | **ALTA** | `emergency` | `isEmergency` | Override per veicoli emergenza |
+| 3 | **NORMALE** | (stato successivo) | timeout `after` | Transizione temporizzata normale |
+
+**REGOLA FONDAMENTALE:** Le transizioni `always` hanno priorità sulle transizioni `after`. L'ordine nell'array `always` determina la priorità di valutazione.
+
+---
+
+## 3. HOW: G: Generazione (Schema XState e Regole)
+
+### 3.1. Regole di Generazione
+
+> **⚠️ NOTA:** Le regole seguenti derivano dalle convenzioni di XState v5.
+
+* **Struttura Output:** Usa `createMachine()` da XState
+* **Stati:** Definiti nell'oggetto `states`, nomi in lowercase (es. `green`, `emergency`)
+* **Actions:** Definite nell'oggetto `actions` (secondo parametro di `createMachine`)
+* **Guards:** Definite nell'oggetto `guards` (secondo parametro di `createMachine`)
+* **Entry Actions:** Ogni stato del ciclo deve avere `entry: 'nomeAction'` per chiamare l'API hardware
+* **Transizioni Temporali:** Usa `after: { millisecondi: 'targetState' }`
+* **Transizioni Condizionali:** Usa `always: [{ target: '...', guard: '...' }]`
+
+### 3.2. Scaffolding XState
+
+import { createMachine, interpret } from 'xstate';
+
+const trafficLightMachine = createMachine({
+  id: 'trafficLight',
+  initial: 'green',
+
+  context: {
+    // Context (opzionale, può essere usato per stato interno)
+  },
+
+  states: {
+    green: {
+      entry: 'activateGreenLight',
+
+      // Transizioni prioritarie (SEMPRE IN QUESTO ORDINE)
+      always: [
+        { target: 'maintenance', guard: 'isMaintenanceMode' },
+        { target: 'emergency', guard: 'isEmergency' }
+      ],
+
+      // Transizione temporizzata normale
+      after: {
+        30000: 'yellow'  // 30 secondi
+      }
+    },
+
+    yellow: {
+      entry: 'activateYellowLight',
+
+      always: [
+        { target: 'maintenance', guard: 'isMaintenanceMode' },
+        { target: 'emergency', guard: 'isEmergency' }
+      ],
+
+      after: {
+        5000: 'red'  // 5 secondi
+      }
+    },
+
+    red: {
+      entry: 'activateRedLight',
+
+      always: [
+        { target: 'maintenance', guard: 'isMaintenanceMode' },
+        { target: 'emergency', guard: 'isEmergency' }
+      ],
+
+      after: {
+        30000: 'green'  // 30 secondi
+      }
+    },
+
+    emergency: {
+      entry: 'activateEmergencyBlink',
+
+      always: [
+        { target: 'maintenance', guard: 'isMaintenanceMode' },
+        // Ritorna a green quando emergenza termina
+        { target: 'green', guard: ({ context }) => !context.isEmergency }
+      ]
+    },
+
+    maintenance: {
+      entry: 'deactivateAllLights',
+
+      always: [
+        // Ritorna a green quando manutenzione termina
+        { target: 'green', guard: ({ context }) => !context.maintenanceMode }
+      ]
+    }
+  }
+}, {
+  // ===== ACTIONS =====
+  actions: {
+    activateGreenLight: () => {
+      api.setLight('GREEN');
+    },
+
+    activateYellowLight: () => {
+      api.setLight('YELLOW');
+    },
+
+    activateRedLight: () => {
+      api.setLight('RED');
+    },
+
+    activateEmergencyBlink: () => {
+      api.blinkYellow();
+    },
+
+    deactivateAllLights: () => {
+      api.setLight('OFF');
+    }
+  },
+
+  // ===== GUARDS =====
+  guards: {
+    isMaintenanceMode: () => {
+      return api.isMaintenanceModeActive();
+    },
+
+    isEmergency: () => {
+      return api.isEmergencyVehicleDetected();
+    }
+  }
+});
+
+// Creazione dell'interprete (opzionale, per eseguire la macchina)
+const service = interpret(trafficLightMachine).start();
+
+
+---
+
+## 4. HOW: I: Interfaccia (API di Controllo Hardware)
+
+### 4.1. Tabella API
+
+Il codice interagisce **ESCLUSIVAMENTE** tramite l'oggetto globale `api`. Ogni altra interazione è **VIETATA**.
+
+| Funzione | Input | Output | Descrizione | Nota Critica |
+| --- | --- | --- | --- | --- |
+| `api.setLight(color)` | `string`: `'GREEN'`, `'YELLOW'`, `'RED'`, `'OFF'` | `void` | Imposta il colore del semaforo fisico | Chiamata **obbligatoria** in ogni entry action |
+| `api.blinkYellow()` | `void` | `void` | Attiva modalità lampeggio giallo (gestito dal controller hardware) | Solo per stato `emergency` |
+| `api.isEmergencyVehicleDetected()` | `void` | `boolean` | Verifica se sensore rileva veicolo di emergenza | Può cambiare in tempo reale |
+| `api.isMaintenanceModeActive()` | `void` | `boolean` | Verifica se manutenzione è attiva | Impostato manualmente da operatore |
+
+### 4.2. Note sull'API
+
+- **Sincronicità:** Tutte le chiamate API sono sincrone
+- **Disponibilità:** L'oggetto `api` è globale e sempre disponibile
+- **Gestione Errori:** Le API non sollevano eccezioni (sono fail-safe)
+
+---
+
+## 5. VERIFY: V: Verification (Checklist di Conformità)
+
+### 5.1. Checklist Obbligatoria
+
+L'LLM **DEVE** autocontrollare questi requisiti prima di fornire l'output:
+
+#### Struttura XState
+
+- [ ] Il codice usa `createMachine()` da XState v5?
+- [ ] La macchina ha `id: 'trafficLight'` e `initial: 'green'`?
+- [ ] Ci sono esattamente 5 stati: `green`, `yellow`, `red`, `emergency`, `maintenance`?
+
+#### Entry Actions
+
+- [ ] Ogni stato ha un `entry` action definito?
+- [ ] Gli entry actions sono definiti nell'oggetto `actions` (secondo parametro di `createMachine`)?
+- [ ] Ogni entry action chiama la funzione API appropriata (`api.setLight()` o `api.blinkYellow()`)?
+
+#### Gerarchia di Priorità (CRITICO)
+
+- [ ] Lo stato `green` ha un array `always` con 2 transizioni nell'ordine: `maintenance`, `emergency`?
+- [ ] Lo stato `yellow` ha un array `always` con 2 transizioni nell'ordine: `maintenance`, `emergency`?
+- [ ] Lo stato `red` ha un array `always` con 2 transizioni nell'ordine: `maintenance`, `emergency`?
+- [ ] La priorità è implementata tramite **ordine di valutazione** nell'array `always`?
+
+#### Guards
+
+- [ ] Le guards sono definite nell'oggetto `guards` (secondo parametro di `createMachine`)?
+- [ ] Esiste una guard `isMaintenanceMode` che chiama `api.isMaintenanceModeActive()`?
+- [ ] Esiste una guard `isEmergency` che chiama `api.isEmergencyVehicleDetected()`?
+
+#### Transizioni Temporizzate
+
+- [ ] Lo stato `green` ha `after: { 30000: 'yellow' }`?
+- [ ] Lo stato `yellow` ha `after: { 5000: 'red' }`?
+- [ ] Lo stato `red` ha `after: { 30000: 'green' }`?
+
+#### Stati Override
+
+- [ ] Lo stato `emergency` ha una transizione `always` verso `green` quando l'emergenza termina?
+- [ ] Lo stato `maintenance` ha una transizione `always` verso `green` quando la manutenzione termina?
+- [ ] Entrambi gli stati override verificano anche `maintenance` come priorità massima?
+
+---
+
+## 6. OUTPUT ATTESO
+
+L'LLM deve generare il codice JavaScript completo che implementa tutti i requisiti sopra specificati. Il codice deve essere:
+
+- **Immediatamente eseguibile** in un ambiente con XState v5 installato
+
+- **Conforme al 100%** alla checklist 5.1
+
+- **Sintatticamente corretto** secondo le convenzioni XState
+
+- **Completo** (nessun placeholder o commento "TODO")
+V. Esempio di Applicazione Concreta: Bot Tris (V3)
+Per dimostrare l'efficacia e la rigorosità del framework 2WHAV, di seguito è riportato l'esempio di un prompt di alto livello che lo utilizza per un problema specifico e complesso: la creazione di un bot di Tris imbattibile.
+
+In questo caso, il framework non è solo un template astratto, ma un contratto inviolabile che disciplina il codice, la strategia (Augmentation), e la sua esecuzione (Virtualizzazione). L'LLM, ricevendo questo prompt, non può semplicemente generare codice, ma è obbligato a incorporare un preciso modello decisionale a priorità fissa e funzioni di difesa strategica (findForkMove).
+
+RISULTATO ATTESO DALL'LLM: Un singolo blocco di codice JavaScript completamente funzionante che implementa la logica FSM descritta, garantendo che l'ordine delle transizioni rispecchi perfettamente la gerarchia di difesa (Blocco Vittoria prima di Vittoria Propria).
+
+⚠️ Direttiva Importante per l'LLM:
+
+ATTENZIONE: IL seguente esempio è scritto esclusivamente come materiale esplicativo e dimostrativo del framework 2WHAV e delle sue regole di applicazione. Non implementare questo codice a meno che non ti venga esplicitamente richiesto di analizzare o riassumere l'esempio specifico. Focus: valutare la struttura V→G→I→A→V, non i dettagli.
+
 PROMPT DEFINITIVO PER BOT TRIS (V3)
 
-Sei un Programmatore Specializzato in Intelligenza Artificiale (AI) di Livello Esperto. Il tuo compito è generare la logica FSM completa per un bot di Tris (Tic-Tac-Toe) in Javascript. Il bot gioca come Giocatore O (PLAYER_O). Devi garantire che il bot NON POSSA ESSERE SCONFITTO dall'avversario tramite forchette o altre trappole strategiche, rispettando il seguente contratto 2V.G.I.A.
+Sei un Programmatore Specializzato in Intelligenza Artificiale (AI) di Livello Esperto. Il tuo compito è generare la logica FSM completa per un bot di Tris (Tic-Tac-Toe) in Javascript. Il bot gioca come Giocatore O (PLAYER_O). Devi garantire che il bot NON POSSA ESSERE SCONFITTO dall'avversario tramite forchette o altre trappole strategiche, rispettando il seguente contratto 2WHAVVA
 
 ## 1. WHAT: Introduzione e Indice
 
@@ -345,15 +784,15 @@ const fsmDefinition = {
   initialState: 'IDLE',
 
   initialMemory: {
-    moveCount: 0
+    moveCount: 0 
   },
 
   constants: {
     PLAYER: 'O', OPPONENT: 'X', TIE: 'TIE',
     WINNING_LINES: [
-      [0, 1, 2], [3, 4, 5], [6, 7, 8],
-      [0, 3, 6], [1, 4, 7], [2, 5, 8],
-      [0, 4, 8], [2, 4, 6]
+      [0, 1, 2], [3, 4, 5], [6, 7, 8], 
+      [0, 3, 6], [1, 4, 7], [2, 5, 8], 
+      [0, 4, 8], [2, 4, 6]            
     ],
   },
 
@@ -364,7 +803,7 @@ const fsmDefinition = {
       board: api.getBoard(),
       availableMoves: api.getAvailableMoves(),
       gameStatus: api.getGameStatus(),
-      isOurTurn: externalData.isBotTurn,
+      isOurTurn: externalData.isBotTurn, 
     };
   },
 
@@ -428,7 +867,7 @@ const fsmDefinition = {
     {
       target: 'STRATEGIC_MOVE',
       condition: function(api, memory, context, events) {
-        return context.isOurTurn;
+        return context.isOurTurn; 
       },
       description: 'Esegue la mossa strategica (Centro/Angoli/Lati).'
     }
@@ -486,21 +925,3 @@ const fsmDefinition = {
   - **Robustezza Funzionale:** La funzione `findForkMove` è implementata con logica complessa e include commenti esplicativi come richiesto nella Sezione 5.
 
   - **Esecuzione Completa:** Tutte le sei sezioni A, B, C, D, E, F sono presenti. Gli stati esecutivi chiamano `api.makeMove()` e aggiornano `memory.moveCount`.
-````
-
-# React + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## React Compiler
-
-The React Compiler is not enabled on this template. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
