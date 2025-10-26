@@ -81,7 +81,6 @@ Oltre al retry base, implementa:
 
 **Risultato:** Zero ambiguità. L'LLM genera codice preciso, conforme e senza bisogno di iterazioni correttive.
 
-
 ## 1. WHAT: Introduzione e Obiettivo (WHAT)
 
 Questa fase costituisce la **dichiarazione di intenti** e stabilisce lo scopo. Definisce **cosa vuoi**, il **risultato finale esatto** che deve essere prodotto e lo **scopo principale del prompt**.
