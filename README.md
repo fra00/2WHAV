@@ -57,21 +57,21 @@ con backoff esponenziale (100ms, 200ms, 400ms).
 
 Output: Oggetto `{ valid: boolean, attempts: number, error?: string }`
 
-## HOW: Regole (G)
+## HOW: Regole
 - OBBLIGATORIO: Sintassi `async function validateEmail(email) { ... }`
 - OBBLIGATORIO: Usa try/catch per ogni tentativo
 - VIETATO: Usare setTimeout (usa solo delay sincrono per semplicità)
 
-## HOW: API (I)
+## HOW: API
 Puoi chiamare SOLO:
 - `api.checkEmail(email)` → Promise<boolean> (può rigettare con Error)
 
-## AUGMENT: Intelligenza Extra (A)
+## AUGMENT: Intelligenza Extra
 Oltre al retry base, implementa:
 1. Log di ogni tentativo fallito con `console.warn()`
 2. Se tutti i tentativi falliscono, includi il messaggio d'errore nell'output
 
-## VERIFY: Checklist (V)
+## VERIFY: Checklist
 - [ ] Funzione async?
 - [ ] Esattamente 3 tentativi?
 - [ ] Backoff esponenziale (100ms, 200ms, 400ms)?
@@ -116,11 +116,11 @@ L'output **DEVE** essere **SOLO** codice **JavaScript** formattato in un **Ogget
 ### # Indice
 | Sezione | Logica | Scopo |
 | :--- | :--- | :--- |
-| **\# 1. Virtualizzazione (V)** | HOW | Modello Comportamentale e Priorità del Flusso. |
-| **\# 2. Generazione (G)** | HOW | Regole di sintassi e scaffolding. |
-| **\# 3. Interfaccia (I)** | HOW | Documentazione API. |
-| **\# 4. Augmentation (A)** | HOW | Direttive strategiche e creative. |
-| **\# 5. Verification (V)** | VERIFY | Checklist di conformità finale. |
+| **\# 1. Virtualizzazione** | WHERE | Modello Comportamentale e Priorità del Flusso. |
+| **\# 2. Generazione** | HOW | Regole di sintassi e scaffolding. |
+| **\# 3. Interfaccia** | HOW | Documentazione API. |
+| **\# 4. Augmentation** | AUGMENTATION | Direttive strategiche e creative. |
+| **\# 5. Verification** | VERIFY | Checklist di conformità finale. |
 ```
 
 ## Virtualizzazione, Generazione, Interfaccia, Augmentation (HOW)
@@ -223,7 +223,7 @@ Questa fase definisce gli **unici mezzi con cui il codice può interagire con il
 #### Esempio Pratico
 
 ```
-## 4. HOW: I: Interfaccia (API di Interazione)
+## 4. HOW: Interfaccia (API di Interazione)
 Il codice interagisce SOLO tramite l'oggetto `api`:
 
 | Funzione | Input | Output | Nota Critica |
@@ -255,7 +255,7 @@ Queste logiche devono essere **richieste esplicitamente** in questa sezione, anc
 #### Esempio Pratico
 
 ```
-## 5. HOW: A: Augmentation (Direttive Strategiche)
+## 5. HOW: Augmentation (Direttive Strategiche)
 
 **CREATIVITY DIRECTIVE:**
 L'LLM DEVE implementare logiche che vanno oltre la risoluzione del compito base ("vai a X e carica Y"):
@@ -285,7 +285,7 @@ Questa fase serve come **reminder finale** dei requisiti più critici. La checkl
 Questa è l'**ultima fase** e funge da **reminder finale** dei requisiti critici. La checklist rafforza le regole chiave durante la generazione dell'output e fornisce uno strumento di validazione per l'utente. Includi questa sezione alla fine del prompt per massimizzare la probabilità che l'LLM consideri questi vincoli durante la generazione del codice.
 
 ```
-## 6. VERIFY: V: Verification (Checklist di Conformità)
+## 6. VERIFY: Verification (Checklist di Conformità)
 
 Prima di fornire l'output, verifica che il codice rispetti:
 * [ ] L'output è un singolo oggetto letterale JavaScript?
@@ -300,12 +300,12 @@ Sebbene il framework **2WHAV** sia stato progettato per affrontare la massima co
 
 ### Flessibilità delle Fasi:
 
-- **Virtualizzazione (V)** (Where)
+- **Virtualizzazione** (Where)
 
   - Flessibilità: Condensabile/Omettibile
   - Condizione per l'Omissione: Se si utilizza un'architettura o una libreria altamente nota all'LLM (es. XState o Redux), la sua definizione può essere spostata nella fase Generazione (HOW), usando lo scaffolding come base. Tuttavia, la Gerarchia di Priorità deve essere definita altrove.
 
-- **Augmentation (A)** (Augment?)
+- **Augmentation** (Augment?)
 
   - Flessibilità: Facoltativa
   - Condizione per l'Omissione: È la fase del valore aggiunto strategico. Può essere omessa se l'obiettivo è solo un codice funzionale e conforme ai requisiti minimi, senza bisogno di intelligenza tattica o prevenzione degli errori complessi.
@@ -346,7 +346,7 @@ Questo blocco di testo è il prompt finale coeso che unisce tutte le sezioni di 
 
 **⚠️ Direttiva Importante per l'LLM:**
 
-**ATTENZIONE:** IL seguente esempio è scritto **esclusivamente come materiale esplicativo e dimostrativo** del framework **2WHAV** e delle sue regole di applicazione. **Non implementare questo codice** a meno che non ti venga esplicitamente richiesto di analizzare o riassumere l'esempio specifico. Focus: valutare la struttura V→G→I→A→V, non i dettagli.
+**ATTENZIONE:** IL seguente esempio è scritto **esclusivamente come materiale esplicativo e dimostrativo** del framework **2WHAV** e delle sue regole di applicazione. **Non implementare questo codice** a meno che non ti venga esplicitamente richiesto di analizzare o riassumere l'esempio specifico. Focus: valutare la struttura non i dettagli.
 
 ```
 # 🚀 2WHAV Prompt: Agente Decisionale Logistico v1.0 (JavaScript) 🚀
@@ -363,13 +363,13 @@ L'output **DEVE** essere **SOLO** codice **JavaScript** formattato in un oggetto
 ### # Indice
 | Sezione | Logica | Scopo |
 | :--- | :--- | :--- |
-| **\# Virtualizzazione (V)** | HOW | Modello Comportamentale e Priorità del Flusso. |
-| **\# Generazione (G)** | HOW | Regole di sintassi e scaffolding. |
-| **\# Interfaccia (I)** | HOW | Documentazione API. |
-| **\# Augmentation (A)** | HOW | Direttive strategiche e creative. |
-| **\# Verification (V)** | VERIFY | Checklist di conformità finale. |
+| **\# Virtualizzazione** | HOW | Modello Comportamentale e Priorità del Flusso. |
+| **\# Generazione** | HOW | Regole di sintassi e scaffolding. |
+| **\# Interfaccia** | HOW | Documentazione API. |
+| **\# Augmentation** | HOW | Direttive strategiche e creative. |
+| **\# Verification** | VERIFY | Checklist di conformità finale. |
 
-## 2. HOW: V: Virtualizzazione (Modello Comportamentale)
+## 2. HOW: Virtualizzazione (Modello Comportamentale)
 
 ### Contratto del Motore Decisionale
 Il Motore Decisionale (che può essere FSM, Behaviour Tree o Ruleset) deve valutare le sue logiche in **questo ordine di priorità inviolabile**:
@@ -377,7 +377,7 @@ Il Motore Decisionale (che può essere FSM, Behaviour Tree o Ruleset) deve valut
 2.  **PIANIFICAZIONE (High Priority):** Sequenze di azioni per completare un compito.
 3.  **STANDARD (Normal Priority):** Logiche di attesa o monitoraggio.
 
-## 3. HOW: G: Generazione (Regole e Scaffolding COMPLETO)
+## 3. HOW: Generazione (Regole e Scaffolding COMPLETO)
 
 ### 3.1. Regole Generali di Generazione del Codice
 * **Output Obbligatorio:** L'output è un singolo oggetto letterale `agentLogic`.
@@ -388,7 +388,7 @@ Il Motore Decisionale (che può essere FSM, Behaviour Tree o Ruleset) deve valut
 javascriptconst agentLogic = {  initialState: 'IDLE', // Stato iniziale del Motore Decisionale  memory: { /* Dati persistenti */ },  CONSTANTS: {     MAX_LOAD: 500   },    updateContext: function(api, externalData) {     // DEVE restituire l'oggetto 'context' per la decisione    return {};  },    decideAction: function(api, externalData) {    // DEVE contenere la logica di valutazione della priorità 2.1    const context = agentLogic.updateContext(api, externalData);    // [Logica di esecuzione del Motore Decisionale]  },    _helperCalculateCost: function(path) {    // [Implementazione Helper]    return 0;  }};
 
 
-4. HOW: I: Interfaccia (API di Interazione)
+4. HOW: Interfaccia (API di Interazione)
 
 ### 4.1. API Table
 
@@ -400,13 +400,13 @@ Il codice interagisce SOLO tramite l'oggetto `api`:
 | `api.requestPath(target)` | `object` {x, y} | `boolean` | Richiede un percorso; FALLIBILE. |
 | `api.loadItem(item_id)` | `string` | `boolean` | Tenta di caricare un oggetto. |
 
-## 5. HOW: A: Augmentation (Direttive Strategiche)
+## 5. HOW: Augmentation (Direttive Strategiche)
 
 ### 5.1. Creativity Directive
 
 L'LLM deve implementare un sistema di **caching della memoria** per le posizioni critiche e deve calcolare un **costo opportunità** per ogni compito, non solo il percorso più breve.
 
-## 6. VERIFY: V: Verification (Controllo Finale)
+## 6. VERIFY: Verification (Controllo Finale)
 
 ### 6.1. Checklist di Conformità Finale
 
@@ -425,7 +425,7 @@ L'LLM **DEVE** verificare:
 
 **⚠️ Direttiva Importante per l'LLM:**
 
-**ATTENZIONE:** IL seguente esempio è scritto **esclusivamente come materiale esplicativo e dimostrativo** del framework **2WHAV** e delle sue regole di applicazione. **Non implementare questo codice** a meno che non ti venga esplicitamente richiesto di analizzare o riassumere l'esempio specifico. Focus: valutare la struttura V→G→I→A→V, non i dettagli.
+**ATTENZIONE:** IL seguente esempio è scritto **esclusivamente come materiale esplicativo e dimostrativo** del framework **2WHAV** e delle sue regole di applicazione. **Non implementare questo codice** a meno che non ti venga esplicitamente richiesto di analizzare o riassumere l'esempio specifico. Focus: valutare la struttura non i dettagli.
 
 ```
 # 🚦 2WHAV Prompt: Sistema Semaforo Intelligente v2.0 (XState)
@@ -450,7 +450,7 @@ Sei un programmatore esperto di sistemi a stati finiti. Il tuo compito è creare
 
 ---
 
-## 2. WHERE: V: Virtualizzazione (Framework e Architettura)
+## 2. WHERE: Virtualizzazione (Framework e Architettura)
 
 ### 2.1. Framework Target
 **XState v5** (https://xstate.js.org/)
@@ -488,7 +488,7 @@ La priorità viene implementata tramite **ordine di valutazione delle transizion
 
 ---
 
-## 3. HOW: G: Generazione (Schema XState e Regole)
+## 3. HOW: Generazione (Schema XState e Regole)
 
 ### 3.1. Regole di Generazione
 
@@ -617,7 +617,7 @@ const service = interpret(trafficLightMachine).start();
 
 ---
 
-## 4. HOW: I: Interfaccia (API di Controllo Hardware)
+## 4. HOW: Interfaccia (API di Controllo Hardware)
 
 ### 4.1. Tabella API
 
@@ -638,7 +638,7 @@ Il codice interagisce **ESCLUSIVAMENTE** tramite l'oggetto globale `api`. Ogni a
 
 ---
 
-## 5. VERIFY: V: Verification (Checklist di Conformità)
+## 5. VERIFY: Verification (Checklist di Conformità)
 
 ### 5.1. Checklist Obbligatoria
 
@@ -706,7 +706,7 @@ In questo caso, il framework non è solo un _template_ astratto, ma un **contrat
 
 **⚠️ Direttiva Importante per l'LLM:**
 
-**ATTENZIONE:** IL seguente esempio è scritto **esclusivamente come materiale esplicativo e dimostrativo** del framework **2WHAV** e delle sue regole di applicazione. **Non implementare questo codice** a meno che non ti venga esplicitamente richiesto di analizzare o riassumere l'esempio specifico. Focus: valutare la struttura V→G→I→A→V, non i dettagli.
+**ATTENZIONE:** IL seguente esempio è scritto **esclusivamente come materiale esplicativo e dimostrativo** del framework **2WHAV** e delle sue regole di applicazione. **Non implementare questo codice** a meno che non ti venga esplicitamente richiesto di analizzare o riassumere l'esempio specifico. Focus: valutare la struttura, non i dettagli.
 
 ````
 PROMPT DEFINITIVO PER BOT TRIS (V3)
@@ -722,13 +722,13 @@ RISULTATO FINALE: Un singolo oggetto letterale Javascript ({ ... }) che aderisce
 ### 1.2. Indice
 | Sezione | Logica | Scopo |
 | :--- | :--- | :--- |
-| **\# Virtualizzazione (V)** | HOW | Contratto del Motore con Priorità Assoluta. |
-| **\# Interfaccia (I)** | HOW | Contratto API e Context. |
-| **\# Generazione (G)** | HOW | Contratto del Codice e Struttura. |
-| **\# Augmentation (A)** | HOW | Direttiva di Contribuzione Strategica e Intelligenza. |
-| **\# Verification (V)** | VERIFY | Autocontrollo Obbligatorio e Rigoroso. |
+| **\# Virtualizzazione** | WHERE | Contratto del Motore con Priorità Assoluta. |
+| **\# Interfaccia** | HOW | Contratto API e Context. |
+| **\# Generazione** | HOW | Contratto del Codice e Struttura. |
+| **\# Augmentation** | Direttiva di Contribuzione Strategica e Intelligenza. |
+| **\# Verification** | VERIFY | Autocontrollo Obbligatorio e Rigoroso. |
 
-## 2. HOW: V: Virtualizzazione (Contratto del Motore con Priorità Assoluta)
+## 2. HOW: Virtualizzazione (Contratto del Motore con Priorità Assoluta)
 
 ### 2.1. Gestione del Turno
 Il dato cruciale per la gestione del turno è externalData.isBotTurn (boolean), utilizzato per popolare context.isOurTurn nella Sezione 3.
@@ -755,7 +755,7 @@ Il codice interagisce esclusivamente tramite `api` e l'oggetto `context` costrui
 | `api.getAvailableMoves()`| Indici delle celle vuote (mosse legali). |
 | `api.makeMove(index)` | Esegue la mossa. OBBLIGATORIO negli `onEnter`. |
 
-## 4. HOW: G: Generazione (Contratto del Codice e Struttura)
+## 4. HOW: Generazione (Contratto del Codice e Struttura)
 
 ### 4.1. Regole di Sintassi
 * Output = singolo oggetto letterale ({ ... }).
@@ -883,7 +883,7 @@ const fsmDefinition = {
 };
 
 
-5. HOW: A: Augmentation (Direttiva di Contribuzione Strategica e Intelligenza)
+5. HOW: Augmentation (Direttiva di Contribuzione Strategica e Intelligenza)
 
 - **DIRETTIVA CREATIVA POTENZIATA:** L'LLM deve agire come un giocatore esperto che conosce perfettamente la strategia del Tris. La logica DEVE garantire che il bot non sia battuto da alcuna sequenza ottimale dell'avversario.
 
@@ -902,7 +902,7 @@ const fsmDefinition = {
   - Mossa di Ripiego: Sequenza Centro > Angoli Opposti > Angoli Vuoti > Lati.
 
 
-## 6. VERIFY: V: Verification (Autocontrollo Obbligatorio e Rigoroso)
+## 6. VERIFY: Verification (Autocontrollo Obbligatorio e Rigoroso)
 
 - **AUTOCONTROLLO FINALE:** L'LLM deve verificare che il codice generato rispetti tutti i seguenti punti:
 
