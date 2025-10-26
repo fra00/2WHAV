@@ -1,40 +1,8 @@
-repo esempio Tic Tac Tow: [GitHub - fra00/2WHAV: 2WHAV framework](https://github.com/fra00/2WHAV)
-
-Chiedere ad un'Intelligenza Artificiale (come un LLM) di scrivere del codice complesso che rispetti le tue **regole di architettura o strategia** e si interfacci con un ambiente reale è difficile.
-
-Il framework **2WHAV** (What → Where → How → Augment → Verify) è un metodo di progettazione dei prompt che nasce proprio per risolvere questo problema.
-
-Serve a **standardizzare** come si scrivono prompt complessi, il suo scopo principale è eliminare le **"zone grigie"** (l'effetto pratico è che il modello ha meno ambiguità, risponde in modo più coerente, e produce risultati più prevedibili) nella generazione del codice. Una volta stabilite chiaramente le regole, le priorità e gli ambienti , l'LLM è in grado di generare virtualmente **un'ampia gamma di codice complesso** in modo conforme alle specifiche solo cambiando le richieste (sezione WHAT e API).
-
-Non può imporre vincoli tecnici all'LLM, ma offre una struttura progettuale che riduce le ambiguità e aumenta la coerenza del comportamento generativo sepcificando:
-
-- **Dove Gira (Virtualizzazione):** **Virtualizza il sistema in cui dovrà interagire e, crucialmente, definisci le regole della macchina a stati o di qualsiasi altra architettura di controllo** che dovrà contenere il codice. Stabilisci anche l'ordine di priorità delle sue decisioni.
-  
-- **Come farlo (Generazione e Interfaccia):** Spiega le **regole di scrittura del codice** e come dovrà interagire con il tuo mondo (tramite precise API e sintassi)
-  
-- **L'intelligenza in più (Augmentation):** vai oltre la richiesta di base e richiedi all'AI di dimostrare **pensiero strategico avanzato**.
-  
-- **Prova che hai fatto bene (Verification):** L'AI deve **autocontrollare** il suo codice rispetto a ogni singola regola del contratto prima di consegnarlo.
-  
-
-In pratica, il **2WHAV** trasforma un'istruzione vaga ("Scrivi un bot") in un Capitolato Tecnico del Codice, dando le informazioni per un output non solo corretto, ma anche strutturalmente robusto e conforme ai tuoi standard.
-
-### 2WHAV
+## 2WHAV
 
 Il 2WHAV è una struttura di Prompt Engineering rigorosa, progettata per massimizzare l'aderenza degli output alle specifiche. Il framework segue il flusso logico "What → Where → How → Augment → Verify".
 
 **Schema del Framework:**
-
-**1. SCOPO - What? (Cosa vuoi?)** • Componente: # What First • Scopo: Definisce l'obiettivo, il ruolo dell'AI e il formato di output atteso.
-
-**2. AMBIENTE - Where? (Dove gira?)** • Componente: Virtualizzazione (V1) • Scopo: Definisce l'architettura interna (es. FSM o qualsiasi altra struttura) e l'ordine di priorità decisionale (Gerarchia).
-
-**3. COSTRUZIONE - How? (Come lo scrivi?)** • Componenti: Generazione + Interfaccia • Scopo: Stabilisce lo scaffolding, le regole di sintassi e le API di comunicazione.
-
-**4. STRATEGIA - Augment? (Aggiungi valore?)** • Componente: Augmentation • Scopo: Richiede l'intelligenza avanzata: ottimizzazione, logica predittiva e complessità strategica.
-
-**5. CONTROLLO - You Did Well? (Controllo QA)** • Componente: Verification (V2) • Scopo: Richiede l'autocontrollo rigoroso (la Checklist) su tutti i requisiti stabiliti.
-
 
 ```
 flowchart LR
@@ -53,48 +21,38 @@ flowchart LR
     end
 ```
 
----
+### Nota di Generalizzazione ⚠️
 
-### I. Nota di Generalizzazione ⚠️
-
-**Nota Importante:** Gli esempi di codice (Motori Decisionali, API, o *scaffolding*) forniti in questa guida sono **puramente illustrativi**. L'architettura di controllo (**Motore Decisionale** o **Modello Comportamentale**) e le **API effettive** devono essere definite in base al **dominio specifico** (es. Logistica, Trading, Giochi) richiesto nel prompt. Per coerenza, gli esempi concreti utilizzano **JavaScript**.
-
----
+*Gli esempi di codice (Motori Decisionali, API, o *scaffolding*) forniti in questa guida sono **puramente illustrativi**. L'architettura di controllo (**Motore Decisionale** o **Modello Comportamentale**) e le **API effettive** devono essere definite in base al **dominio specifico** (es. Logistica, Trading, Giochi) richiesto nel prompt. Per coerenza, gli esempi concreti utilizzano **JavaScript**.*
 
 ### 🚀 Esempio Rapido: Il Problema che 2WHAV Risolve
 
 **Obiettivo:** Creare una funzione che validi un'email tramite API esterna, con retry automatico in caso di errore.
 
-### ❌ Prompt Tradizionale (Ambiguo)
+#### ❌ Prompt Tradizionale (Ambiguo)
 
 ```
-Scrivi una funzione JavaScript che validi un'email chiamando un'API. 
+Scrivi una funzione JavaScript che validi un'email chiamando un'API.
 Deve riprovare se fallisce.
 ```
 
 **Cosa manca?**
 
 - Quante volte riprovare? (2? 3? 10?)
-  
 - Con quale strategia? (backoff esponenziale? delay fisso?)
-  
 - Cosa restituire se fallisce del tutto?
-  
 - Quale sintassi? (async/await? Promises? callback?)
-  
 
 **Risultato:** L'LLM deve indovinare, producendo codice che probabilmente non rispetta le tue aspettative.
 
----
-
-### ✅ Con 2WHAV (Contratto Chiaro)
+#### ✅ Con 2WHAV (Contratto Chiaro)
 
 ```
 # Validatore Email con Retry
 
 ## WHAT: Obiettivo
-Crea una funzione async `validateEmail(email)` che validi un indirizzo 
-email tramite API esterna. In caso di errore, deve riprovare fino a 3 volte 
+Crea una funzione async `validateEmail(email)` che validi un indirizzo
+email tramite API esterna. In caso di errore, deve riprovare fino a 3 volte
 con backoff esponenziale (100ms, 200ms, 400ms).
 
 Output: Oggetto `{ valid: boolean, attempts: number, error?: string }`
@@ -123,28 +81,25 @@ Oltre al retry base, implementa:
 
 **Risultato:** Zero ambiguità. L'LLM genera codice preciso, conforme e senza bisogno di iterazioni correttive.
 
-### II. WHAT: Introduzione e Obiettivo (Cosa)
+
+## 1. WHAT: Introduzione e Obiettivo (WHAT)
 
 Questa fase costituisce la **dichiarazione di intenti** e stabilisce lo scopo. Definisce **cosa vuoi**, il **risultato finale esatto** che deve essere prodotto e lo **scopo principale del prompt**.
 
 Il **WHAT** specifica cosa l'LLM dovrà fare utilizzando tutte le fasi successive come manuale tecnico (HOW, Augmentation e Verification). Per questo motivo, questa sezione deve essere **la più specifica possibile**, includendo:
 
 - **Ruolo e Competenza:** L'assegnazione del ruolo esatto all'LLM (es. "Sei un Ingegnere Senior in JavaScript").
-  
 - **Vincoli di Flusso:** Se esistono vincoli operativi o un flusso principale (ad esempio, "Il sistema deve prioritizzare la lettura dati prima di qualsiasi scrittura").
-  
 - **Regole e Vincoli Iniziali:** Qualsiasi regola o vincolo sul funzionamento generale necessario per raggiungere il risultato finale.
-  
 - **Formato di Output:** La specifica del formato richiesto (es. "SOLO codice JavaScript in un oggetto letterale unico").
-  
 
 Nota: Sii chiaro e dettagliato nello specificare lo scopo , più specifico è il dettaglio del tuo scopo e migliori saranno i risultati
 
-**Componenti del WHAT:**
+- **Componenti del WHAT:**
 
-• **# What First** - Scopo: Definisce l'obiettivo finale e il ruolo dell'LLM (Logica: WHAT)
+  - **What First** - Scopo: Definisce l'obiettivo finale e il ruolo dell'LLM (Logica: WHAT)
 
-• **# Indice** - Scopo: Fornisce la mappa di navigazione e valida la struttura del prompt (Logica: WHAT)
+  - **Indice** - Scopo: Fornisce la mappa di navigazione e valida la struttura del prompt (Logica: WHAT)
 
 Nota: L'indice nei prompt lunghi è importante perchè facilita l' LLM a orientarsi e stabilire una **mappa mentale** chiara del documento
 
@@ -155,7 +110,7 @@ Nota: L'indice nei prompt lunghi è importante perchè facilita l' LLM a orienta
 
 ## 1. WHAT: Introduzione e Indice
 
-### # What First: Scopo e Risultato Atteso
+### What First: Scopo e Risultato Atteso
 Sei un esperto di sistemi decisionali. Il tuo compito è creare il **Motore Decisionale** per un agente che ottimizza la logistica di magazzino.
 L'output **DEVE** essere **SOLO** codice **JavaScript** formattato in un **Oggetto Letterale Unico** (es. `const agentLogic = { ... }`).
 
@@ -169,29 +124,25 @@ L'output **DEVE** essere **SOLO** codice **JavaScript** formattato in un **Ogget
 | **\# 5. Verification (V)** | VERIFY | Checklist di conformità finale. |
 ```
 
----
-
-### III. Virtualizzazione, Generazione, Interfaccia, Augmentation (Come)
+## Virtualizzazione, Generazione, Interfaccia, Augmentation (HOW)
 
 Questa fase definisce tutte le regole operative per l'esecuzione del compito.
 
-### 2. (Where): Virtualizzazione (Modello Comportamentale)
+### 2. (WHERE): Virtualizzazione (Modello Comportamentale)
 
-Definisce il **modello logico che il codice deve implementare**. Questa fase è dove l'LLM viene istruito non solo sul *tipo* di codice, ma sulla sua **architettura interna di controllo**. Invece di fornire all'LLM l'intero codice dell'ambiente di destinazione, la **virtualizzazione ne descrive il contesto di esecuzione e le regole astratte**. Ad esempio, si specifica chiaramente che il codice deve essere una **Macchina a Stati Finiti (FSM)**, un **Albero Comportamentale (Behaviour Tree)** o un set di regole, definendo la **struttura** che l'LLM dovrà popolare. Questo permette all'LLM di comprendere a fondo **come il codice generato verrà utilizzato**, ottimizzando il resto delle nozioni fornite nel prompt. Qui si stabilisce l'**ordine gerarchico** e la **priorità assoluta** delle sue decisioni. **Indica qui la descrizione completa del modello operativo: non solo l'architettura (es. FSM), ma anche il ciclo di esecuzione, il flusso dei dati e le priorità decisionali.**
+Definisce il **modello logico che il codice deve implementare**. Questa fase è dove l'LLM viene istruito non solo sul _tipo_ di codice, ma sulla sua **architettura interna di controllo**. Invece di fornire all'LLM l'intero codice dell'ambiente di destinazione, la **virtualizzazione ne descrive il contesto di esecuzione e le regole astratte**. Ad esempio, si specifica chiaramente che il codice deve essere una **Macchina a Stati Finiti (FSM)**, un **Albero Comportamentale (Behaviour Tree)** o un set di regole, definendo la **struttura** che l'LLM dovrà popolare. Questo permette all'LLM di comprendere a fondo **come il codice generato verrà utilizzato**, ottimizzando il resto delle nozioni fornite nel prompt. Qui si stabilisce l'**ordine gerarchico** e la **priorità assoluta** delle sue decisioni. **Indica qui la descrizione completa del modello operativo: non solo l'architettura (es. FSM), ma anche il ciclo di esecuzione, il flusso dei dati e le priorità decisionali.**
 
 **Componente della Virtualizzazione:**
 
-• **Specifica del Flusso**
+**Specifica del Flusso**
 
 - Scopo: Stabilisce l'architettura di controllo (es. FSM, Behaviour Tree, ecc.) e la priorità delle decisioni.
-  
 - Requisito Critico: Il modello è un Motore Decisionale con priorità di valutazione (es. Urgenza -> Pianificazione).
-  
 
-### Esempio Pratico (Motore Decisionale FSM Illustrativo - JS)
+#### Esempio Pratico (Motore Decisionale FSM Illustrativo - JS)
 
 ```
-## 2. HOW: V: Virtualizzazione (Modello Comportamentale)
+## 2. WHERE: Virtualizzazione (Modello Comportamentale)
 
 ### Specifica del Motore Decisionale
 - Il Motore Decisionale (qui illustrato come FSM per chiarezza) deve valutare le sue logiche in **questo ordine di priorità inviolabile**:
@@ -204,7 +155,7 @@ Definisce il **modello logico che il codice deve implementare**. Questa fase è 
 - Le transizioni valutano prima le condizioni di livello superiore
 ```
 
-### 3. (How): Generazione (Regole e Scaffolding COMPLETO)
+### 3. (HOW): Generazione (Regole e Scaffolding COMPLETO)
 
 Questa fase stabilisce le **regole inderogabili per la scrittura del codice**. Il suo obiettivo è duplice: imporre standard per un **codice pulito e robusto** e definire i **flussi obbligatori** e le **limitazioni tecniche** necessarie per l'integrazione. L'LLM riceve qui lo **scaffolding esatto** che deve popolare e le regole sintattiche che deve rispettare, come l'obbligo di usare una specifica convenzione di denominazione o il divieto di usare funzioni moderne non supportate.
 
@@ -214,26 +165,21 @@ Questa fase stabilisce le **regole inderogabili per la scrittura del codice**. I
 
 **Componenti della Generazione:**
 
-• **Regole Generali**
+- **Regole Generali**
 
-- Scopo: Impone standard di stile e compatibilità tecnica.
-  
-- Requisito Critico: Es: OBBLIGATORIO: Solo function(...) {} (vietate =>). Accesso Helper SOLO tramite agentLogic.helper().
-  
+  - Scopo: Impone standard di stile e compatibilità tecnica.
+  - Requisito Critico: Es: OBBLIGATORIO: Solo function(...) {} (vietate =>). Accesso Helper SOLO tramite agentLogic.helper().
 
-• **Scaffolding**
+- **Scaffolding**
+  - Scopo: Fornisce lo scheletro esatto e i formati obbligatori per le strutture del Motore Decisionale.
+  - Requisito Critico: Es: Deve essere compatibile con l'architettura scelta (Oggetto, FSM, BT, ecc.).
 
-- Scopo: Fornisce lo scheletro esatto e i formati obbligatori per le strutture del Motore Decisionale.
-  
-- Requisito Critico: Es: Deve essere compatibile con l'architettura scelta (Oggetto, FSM, BT, ecc.).
-  
-
-### Esempio Pratico (Scaffolding JavaScript)
+#### Esempio Pratico (Scaffolding JavaScript)
 
 ⚠️ **NOTA:** Le regole seguenti (es. divieto di arrow functions) sono specifiche per questo esempio di sistema embedded. Nel TUO prompt, definisci SOLO le regole necessarie al TUO ambiente/standard.
 
 ```
-## 3. HOW: G: Generazione (Regole e Scaffolding COMPLETO)
+## 3. HOW: Generazione (Regole e Scaffolding COMPLETO)
 
 ### Regole Generali di Generazione del Codice
 * **Sintassi delle Funzioni:** È **OBBLIGATORIO** utilizzare `function(...) { ... }`. **VIETATO UTILIZZARE FUNZIONI LAMBDA (`=>`)**.
@@ -269,16 +215,13 @@ Questa fase definisce gli **unici mezzi con cui il codice può interagire con il
 
 **Componente dell'Interfaccia:**
 
-• **API Table**
+- **API Table**
 
-- Scopo: Documenta ogni funzione di interazione.
-  
-- Output: Il codice generato NON DEVE usare chiamate API non documentate.
-  
-- Requisito Critico: [specificato nelle API documentate]
-  
+  - Scopo: Documenta ogni funzione di interazione.
+  - Output: Il codice generato NON DEVE usare chiamate API non documentate.
+  - Requisito Critico: [specificato nelle API documentate]
 
-### Esempio Pratico
+#### Esempio Pratico
 
 ```
 ## 4. HOW: I: Interfaccia (API di Interazione)
@@ -298,11 +241,8 @@ Questa fase richiede all'LLM di implementare **logiche avanzate oltre il requisi
 L'Augmentation specifica esplicitamente:
 
 - Meccanismi di ottimizzazione (es. costo opportunità, caching)
-  
 - Logiche di resilienza (es. retry, fallback, validazione)
-  
 - Funzionalità preventive (es. risk assessment, anomaly detection)
-  
 
 Queste logiche devono essere **richieste esplicitamente** in questa sezione, anche se non erano menzionate nel WHAT iniziale.
 
@@ -311,11 +251,9 @@ Queste logiche devono essere **richieste esplicitamente** in questa sezione, anc
 • **Creativity Directive**
 
 - Scopo: Inietta intelligenza e complessità tattica.
-  
 - Direttiva Strategica: Richiede l'implementazione di logiche avanzate non esplicitate nello scaffolding.
-  
 
-### Esempio Pratico
+#### Esempio Pratico
 
 ```
 ## 5. HOW: A: Augmentation (Direttive Strategiche)
@@ -328,26 +266,22 @@ L'LLM DEVE implementare logiche che vanno oltre la risoluzione del compito base 
 3.  **PENSIERO CRITICO:** Aggiungi un metodo helper (`agentLogic._calculateRisk`) che valuti il rischio di collisione basato sui dati storici.
 ```
 
----
-
-### IV. VERIFY: Verification (Verifica)
+### 6. VERIFY: Verification (Verifica)
 
 L'ultima fase richiede all'LLM l'autoverifica del rispetto di tutti i requisiti contrattuali.
 
-### 6. (You Did Well): Verification (Controllo Qualità Finale)
+#### (You Did Well): Verification (Controllo Qualità Finale)
 
 Questa fase serve come **reminder finale** dei requisiti più critici. La checklist viene inclusa alla fine del prompt per: - Rafforzare le regole chiave prima della generazione dell'output - Fornire un riferimento rapido per la validazione manuale - Aumentare la probabilità che l'LLM consideri questi vincoli durante la generazione **Nota:** Gli LLM non eseguono verifica post-generazione autonoma. La checklist influenza il processo generativo, ma la validazione finale rimane responsabilità dell'utente.
 
 **Componente della Verification:**
 
-• **Checklist**
+**Checklist**
 
 - Scopo: Un riassunto dei requisiti più critici di Virtualization e Generation.
-  
 - Requisito di Verifica: Reminder per l'LLM + strumento di validazione manuale per l'utente
-  
 
-### Esempio Pratico
+#### Esempio Pratico
 
 Questa è l'**ultima fase** e funge da **reminder finale** dei requisiti critici. La checklist rafforza le regole chiave durante la generazione dell'output e fornisce uno strumento di validazione per l'utente. Includi questa sezione alla fine del prompt per massimizzare la probabilità che l'LLM consideri questi vincoli durante la generazione del codice.
 
@@ -361,78 +295,53 @@ Prima di fornire l'output, verifica che il codice rispetti:
 * [ ] È stata implementata la logica di **caching della memoria** e **costo opportunità**?
 ```
 
-### 🧩 Modularità e Flessibilità del Framework 2WHAV
+## 🧩 Modularità e Flessibilità del Framework 2WHAV
 
 Sebbene il framework **2WHAV** sia stato progettato per affrontare la massima complessità, la sua architettura è **intrinsecamente modulare**. Non tutte le fasi sono obbligatorie in ogni scenario, permettendo di adattare il livello di rigore al compito specifico.
 
-**Flessibilità delle Fasi:**
+### Flessibilità delle Fasi:
 
-• **Virtualizzazione (V)** (Where)
+- **Virtualizzazione (V)** (Where)
 
-- Flessibilità: Condensabile/Omettibile
-  
-- Condizione per l'Omissione: Se si utilizza un'architettura o una libreria altamente nota all'LLM (es. XState o Redux), la sua definizione può essere spostata nella fase Generazione (G), usando lo scaffolding come base. Tuttavia, la Gerarchia di Priorità deve essere definita altrove.
-  
+  - Flessibilità: Condensabile/Omettibile
+  - Condizione per l'Omissione: Se si utilizza un'architettura o una libreria altamente nota all'LLM (es. XState o Redux), la sua definizione può essere spostata nella fase Generazione (HOW), usando lo scaffolding come base. Tuttavia, la Gerarchia di Priorità deve essere definita altrove.
 
-• **Augmentation (A)** (Augment?)
+- **Augmentation (A)** (Augment?)
 
-- Flessibilità: Facoltativa
-  
-- Condizione per l'Omissione: È la fase del valore aggiunto strategico. Può essere omessa se l'obiettivo è solo un codice funzionale e conforme ai requisiti minimi, senza bisogno di intelligenza tattica o prevenzione degli errori complessi.
-  
+  - Flessibilità: Facoltativa
+  - Condizione per l'Omissione: È la fase del valore aggiunto strategico. Può essere omessa se l'obiettivo è solo un codice funzionale e conforme ai requisiti minimi, senza bisogno di intelligenza tattica o prevenzione degli errori complessi.
 
 Le fasi **WHAT (Scopo), HOW (Generazione/Interfaccia),** e **VERIFY (You Did Well?)** costituiscono invece il **fondamento ineliminabile** del framework e devono sempre essere presenti per garantire la coerenza e la qualità dell'output.
 
-### 🎯 Quando Usare 2WHAV?
+## 🎯 Quando Usare 2WHAV?
 
 Il framework è modulare: adatta le fasi alle tue esigenze. Questi esempi sono indicativi, non vincolanti.
 
 **Livelli di Complessità e Fasi Suggerite:**
 
-• **BASSA COMPLESSITÀ**
+- **❌BASSA COMPLESSITÀ**
 
-- Fasi suggerite: Prompt classico
-  
-- Esempio di applicazione: Funzione di utilità, helper semplici
-  
+  - Fasi suggerite: Prompt classico
+  - Esempio di applicazione: Funzione di utilità, helper semplici
 
-• **MEDIA COMPLESSITÀ - LINEARE**
+- **MEDIA COMPLESSITÀ - LINEARE**
 
-- Fasi suggerite: WHAT + G + I + V
-  
-- Esempio di applicazione: Client API, parser, validator, data transformer
-  
+  - Fasi suggerite: WHAT + HOW + VERIFY
+  - Esempio di applicazione: Client API, parser, validator, data transformer
 
-• **MEDIA COMPLESSITÀ - DECISIONALE**
+- **MEDIA COMPLESSITÀ - DECISIONALE**
 
-- Fasi suggerite: WHAT + V + G + I + V
-  
-- Esempio di applicazione: Retry logic con stati, workflow con branch condizionali
-  
+  - Fasi suggerite: WHAT + WHERE + HOW + VERIFY
+  - Esempio di applicazione: Retry logic con stati, workflow con branch condizionali
 
-• **ALTA COMPLESSITÀ - STRATEGICA**
+- **ALTA COMPLESSITÀ - STRATEGICA**
 
-- Fasi suggerite: V + G + I + A + V (completo)
-  
-- Esempio di applicazione: Bot con FSM, sistema multi-priorità, agente decisionale
-  
+  - Fasi suggerite: WHAT + WHERE + HOW + AUGMENT + VERIFY(completo)
+  - Esempio di applicazione: Bot con FSM, sistema multi-priorità, agente decisionale
 
-**Legenda:**
+\*Nota: WHAT è sempre implicito. WHERE (Virtualizzazione) è utile solo per sistemi con logiche decisionali complesse.
 
-- **V** = Virtualizzazione (architettura decisionale con stati/priorità)
-  
-- **G** = Generazione (scaffolding e regole sintattiche)
-  
-- **I** = Interfaccia (documentazione API)
-  
-- **A** = Augmentation (ottimizzazioni e resilienza)
-  
-- **V** = Verification (checklist finale)
-  
-
-*Nota: WHAT è sempre implicito. V (Virtualizzazione) è utile solo per sistemi con logiche decisionali complesse.
-
-### 🎯 Esempio di Prompt Completo Unificato 2WHAV (JavaScript)
+## 🎯 Esempio di Prompt Completo Unificato 2WHAV (JavaScript)
 
 Questo blocco di testo è il prompt finale coeso che unisce tutte le sezioni di cui sopra.
 
@@ -788,13 +697,13 @@ L'LLM deve generare il codice JavaScript completo che implementa tutti i requisi
 - **Completo** (nessun placeholder o commento "TODO")
 ```
 
-### V. Esempio di Applicazione Concreta: Bot Tris (V3)
+## Esempio di Applicazione Concreta: Bot Tris (V3)
 
 Per dimostrare l'efficacia e la rigorosità del framework **2WHAV**, di seguito è riportato l'esempio di un prompt di alto livello che lo utilizza per un problema specifico e complesso: la creazione di un bot di Tris imbattibile.
 
-In questo caso, il framework non è solo un *template* astratto, ma un **contratto inviolabile** che disciplina il codice, la strategia (*Augmentation*), e la sua esecuzione (*Virtualizzazione*). L'LLM, ricevendo questo prompt, non può semplicemente generare codice, ma è obbligato a incorporare un preciso modello decisionale a priorità fissa e funzioni di difesa strategica (*findForkMove*).
+In questo caso, il framework non è solo un _template_ astratto, ma un **contratto inviolabile** che disciplina il codice, la strategia (_Augmentation_), e la sua esecuzione (_Virtualizzazione_). L'LLM, ricevendo questo prompt, non può semplicemente generare codice, ma è obbligato a incorporare un preciso modello decisionale a priorità fissa e funzioni di difesa strategica (_findForkMove_).
 
-**RISULTATO ATTESO DALL'LLM:** Un singolo blocco di codice JavaScript completamente funzionante che implementa la logica FSM descritta, garantendo che l'ordine delle transizioni rispecchi perfettamente la gerarchia di difesa (*Blocco Vittoria* prima di *Vittoria Propria*).
+**RISULTATO ATTESO DALL'LLM:** Un singolo blocco di codice JavaScript completamente funzionante che implementa la logica FSM descritta, garantendo che l'ordine delle transizioni rispecchi perfettamente la gerarchia di difesa (_Blocco Vittoria_ prima di _Vittoria Propria_).
 
 **⚠️ Direttiva Importante per l'LLM:**
 
@@ -862,15 +771,15 @@ const fsmDefinition = {
   initialState: 'IDLE',
 
   initialMemory: {
-    moveCount: 0 
+    moveCount: 0
   },
 
   constants: {
     PLAYER: 'O', OPPONENT: 'X', TIE: 'TIE',
     WINNING_LINES: [
-      [0, 1, 2], [3, 4, 5], [6, 7, 8], 
-      [0, 3, 6], [1, 4, 7], [2, 5, 8], 
-      [0, 4, 8], [2, 4, 6]            
+      [0, 1, 2], [3, 4, 5], [6, 7, 8],
+      [0, 3, 6], [1, 4, 7], [2, 5, 8],
+      [0, 4, 8], [2, 4, 6]
     ],
   },
 
@@ -881,7 +790,7 @@ const fsmDefinition = {
       board: api.getBoard(),
       availableMoves: api.getAvailableMoves(),
       gameStatus: api.getGameStatus(),
-      isOurTurn: externalData.isBotTurn, 
+      isOurTurn: externalData.isBotTurn,
     };
   },
 
@@ -945,7 +854,7 @@ const fsmDefinition = {
     {
       target: 'STRATEGIC_MOVE',
       condition: function(api, memory, context, events) {
-        return context.isOurTurn; 
+        return context.isOurTurn;
       },
       description: 'Esegue la mossa strategica (Centro/Angoli/Lati).'
     }
