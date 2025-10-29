@@ -9,15 +9,15 @@
 
 ## 📘 Documentation Navigation
 
-| Document                                        | Audience                       | Purpose                                                         | Read Time |
-| ----------------------------------------------- | ------------------------------ | --------------------------------------------------------------- | --------- |
-| **[📖 Complete Guide](GUIDE.md)**               | 👤 Humans (New Users)          | Philosophy, theory, strategic decisions, when to use each phase | 25 min    |
-| **📄 README.md** _(this file)_                  | 🤖 LLMs + 👤 Expert Developers | Executable tool specification, templates, rules                 | 15 min    |
-| **💡 Examples**                                 | 👤 + 🤖 Both                   | Production-ready implementations with analysis                  |           |
-| ↳ [🚦 Traffic Light](examples/traffic-light.md) | 👤 + 🤖                        | FSM with XState for a time-based system with priorities.        | ~8 min    |
-| ↳ [🧩 Tic-Tac-Toe Bot](examples/tic-tac-toe.md) | 👤 + 🤖                        | Unbeatable game AI with complex defensive/offensive logic.      | ~10 min   |
+| Document                                                                       | Audience                       | Purpose                                                         | Read Time |
+| ------------------------------------------------------------------------------ | ------------------------------ | --------------------------------------------------------------- | --------- |
+| **[ 📖 (IT) Complete Guide](GUIDE.md)**,**[(EN) Complete Guide](GUIDE.EN.md)** | 👤 Humans (New Users)          | Philosophy, theory, strategic decisions, when to use each phase | 25 min    |
+| **� README.md** _(this file)_                                                  | 🤖 LLMs + 👤 Expert Developers | Executable tool specification, templates, rules                 | 15 min    |
+| **� Examples**                                                                 | 👤 + 🤖 Both                   | Production-ready implementations with analysis                  |           |
+| ↳ [🚦 Traffic Light](examples/traffic-light.md)                                | 👤 + 🤖                        | FSM with XState for a time-based system with priorities.        | ~8 min    |
+| ↳ [🧩 Tic-Tac-Toe Bot](examples/tic-tac-toe.md)                                | 👤 + 🤖                        | Unbeatable game AI with complex defensive/offensive logic.      | ~10 min   |
 
-> **🆕 New to 2WHAV?** Start with the [Complete Guide](GUIDE.md) to understand the philosophy, decision-making process, and modularity principles before using this tool.
+> **🆕 New to 2WHAV?** Start with the Complete Guide [IT](GUIDE.md), [EN](GUIDE.EN.md) to understand the philosophy, decision-making process, and modularity principles before using this tool.
 
 ---
 
@@ -770,6 +770,8 @@ MIT License - see [LICENSE](LICENSE) for details.
 **Maintained by:** [fra00](https://github.com/fra00)
 
 ---
+
+*This document was automatically converted by an LLM from a human-readable guide into this machine-executable format.*
 
 *This README is written following LLM-First Documentation principles and designed as an executable "Tool as Prompt".*
 ```
