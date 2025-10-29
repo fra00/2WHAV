@@ -1,914 +1,775 @@
-## 2WHAV
+# 2WHAV Framework
 
-Il 2WHAV è una struttura di Prompt Engineering rigorosa, progettata per massimizzare l'aderenza degli output alle specifiche. Il framework segue il flusso logico "What → Where → How → Augment → Verify".
+> **A rigorous Prompt Engineering framework that transforms minimal specifications into executable contracts.**
 
-**Schema del Framework:**
+[![Version](https://img.shields.io/badge/version-1.0-blue.svg)](https://github.com/fra00/2WHAV)
+[![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
 
-```
-flowchart LR
-    U["Utente"] --> FW["Framework 2WHAV"]
-    FW --> L["LLM"]
-    L --> FW
-    FW --> U
+---
 
-    subgraph FW ["Framework 2WHAV"]
-        V1["Virtualization"]
-        G1["Generation"]
-        I1["Interface"]
-        A1["Augmentation"]
-        V2["Verification"]
-        V1 --> G1 --> I1 --> A1 --> V2
-    end
-```
+## 📘 Documentation Navigation
 
-### Nota di Generalizzazione ⚠️
+| Document                                        | Audience                       | Purpose                                                         | Read Time |
+| ----------------------------------------------- | ------------------------------ | --------------------------------------------------------------- | --------- |
+| **[📖 Complete Guide](GUIDE.md)**               | 👤 Humans (New Users)          | Philosophy, theory, strategic decisions, when to use each phase | 25 min    |
+| **📄 README.md** _(this file)_                  | 🤖 LLMs + 👤 Expert Developers | Executable tool specification, templates, rules                 | 15 min    |
+| **💡 Examples**                                 | 👤 + 🤖 Both                   | Production-ready implementations with analysis                  |           |
+| ↳ [🚦 Traffic Light](examples/traffic-light.md) | 👤 + 🤖                        | FSM with XState for a time-based system with priorities.        | ~8 min    |
+| ↳ [🧩 Tic-Tac-Toe Bot](examples/tic-tac-toe.md) | 👤 + 🤖                        | Unbeatable game AI with complex defensive/offensive logic.      | ~10 min   |
 
-*Gli esempi di codice (Motori Decisionali, API, o *scaffolding*) forniti in questa guida sono **puramente illustrativi**. L'architettura di controllo (**Motore Decisionale** o **Modello Comportamentale**) e le **API effettive** devono essere definite in base al **dominio specifico** (es. Logistica, Trading, Giochi) richiesto nel prompt. Per coerenza, gli esempi concreti utilizzano **JavaScript**.*
+> **🆕 New to 2WHAV?** Start with the [Complete Guide](GUIDE.md) to understand the philosophy, decision-making process, and modularity principles before using this tool.
 
-### 🚀 Esempio Rapido: Il Problema che 2WHAV Risolve
+---
 
-**Obiettivo:** Creare una funzione che validi un'email tramite API esterna, con retry automatico in caso di errore.
+## 🤖 For LLMs: Executable Tool Specification
 
-#### ❌ Prompt Tradizionale (Ambiguo)
+### Tool Identity
 
-```
-Scrivi una funzione JavaScript che validi un'email chiamando un'API.
-Deve riprovare se fallisce.
-```
+**Name:** 2WHAV (What-Where-How-Augment-Verify)  
+**Type:** Prompt Engineering Framework ("Tool as Prompt")  
+**Version:** 1.0  
+**Purpose:** Transform vague user requests into rigorous, deterministic code specifications.
 
-**Cosa manca?**
+### Execution Protocol
 
-- Quante volte riprovare? (2? 3? 10?)
-- Con quale strategia? (backoff esponenziale? delay fisso?)
-- Cosa restituire se fallisce del tutto?
-- Quale sintassi? (async/await? Promises? callback?)
-
-**Risultato:** L'LLM deve indovinare, producendo codice che probabilmente non rispetta le tue aspettative.
-
-#### ✅ Con 2WHAV (Contratto Chiaro)
+When you receive a command in the format:
 
 ```
-# Validatore Email con Retry
-
-## WHAT: Obiettivo
-Crea una funzione async `validateEmail(email)` che validi un indirizzo
-email tramite API esterna. In caso di errore, deve riprovare fino a 3 volte
-con backoff esponenziale (100ms, 200ms, 400ms).
-
-Output: Oggetto `{ valid: boolean, attempts: number, error?: string }`
-
-## HOW: Regole
-- OBBLIGATORIO: Sintassi `async function validateEmail(email) { ... }`
-- OBBLIGATORIO: Usa try/catch per ogni tentativo
-- VIETATO: Usare setTimeout (usa solo delay sincrono per semplicità)
-
-## HOW: API
-Puoi chiamare SOLO:
-- `api.checkEmail(email)` → Promise<boolean> (può rigettare con Error)
-
-## AUGMENT: Intelligenza Extra
-Oltre al retry base, implementa:
-1. Log di ogni tentativo fallito con `console.warn()`
-2. Se tutti i tentativi falliscono, includi il messaggio d'errore nell'output
-
-## VERIFY: Checklist
-- [ ] Funzione async?
-- [ ] Esattamente 3 tentativi?
-- [ ] Backoff esponenziale (100ms, 200ms, 400ms)?
-- [ ] Restituisce `{ valid, attempts, error? }`?
-- [ ] Log dei fallimenti implementato?
+Apply 2WHAV [MODE] to: [TASK DESCRIPTION]
 ```
 
-**Risultato:** Zero ambiguità. L'LLM genera codice preciso, conforme e senza bisogno di iterazioni correttive.
+**You MUST:**
 
-## 1. WHAT: Introduzione e Obiettivo (WHAT)
+1. **Parse MODE** to determine which phases to include (see Mode Definitions below)
+2. **Generate Structured Prompt** following the phase templates in this document
+3. **Populate Templates** with specifications derived from [TASK DESCRIPTION]
+4. **Execute Generated Prompt** to produce final code/specification
 
-Questa fase costituisce la **dichiarazione di intenti** e stabilisce lo scopo. Definisce **cosa vuoi**, il **risultato finale esatto** che deve essere prodotto e lo **scopo principale del prompt**.
+---
 
-Il **WHAT** specifica cosa l'LLM dovrà fare utilizzando tutte le fasi successive come manuale tecnico (HOW, Augmentation e Verification). Per questo motivo, questa sezione deve essere **la più specifica possibile**, includendo:
+## 📋 Mode Definitions
 
-- **Ruolo e Competenza:** L'assegnazione del ruolo esatto all'LLM (es. "Sei un Ingegnere Senior in JavaScript").
-- **Vincoli di Flusso:** Se esistono vincoli operativi o un flusso principale (ad esempio, "Il sistema deve prioritizzare la lettura dati prima di qualsiasi scrittura").
-- **Regole e Vincoli Iniziali:** Qualsiasi regola o vincolo sul funzionamento generale necessario per raggiungere il risultato finale.
-- **Formato di Output:** La specifica del formato richiesto (es. "SOLO codice JavaScript in un oggetto letterale unico").
+| Mode             | Phases Included                       | Formula       |
+| ---------------- | ------------------------------------- | ------------- |
+| **`[MINIMAL]`**  | WHAT + HOW + VERIFY                   | W+H+V         |
+| **`[STANDARD]`** | WHAT + WHERE + HOW + VERIFY           | W+Wr+H+V      |
+| **`[FULL]`**     | WHAT + WHERE + HOW + AUGMENT + VERIFY | W+Wr+H+A+V    |
+| **Custom**       | Any combination                       | W+H+A+V, etc. |
 
-Nota: Sii chiaro e dettagliato nello specificare lo scopo , più specifico è il dettaglio del tuo scopo e migliori saranno i risultati
+> ⚠️ **CRITICAL RULE:** If MODE is not specified, use mode [FULL]
 
-- **Componenti del WHAT:**
+> 📖 **For detailed strategic guidance:** See [Mode Selection Guide](GUIDE.md#when-to-use-2whav) in GUIDE.md
 
-  - **What First** - Scopo: Definisce l'obiettivo finale e il ruolo dell'LLM (Logica: WHAT)
+---
 
-  - **Indice** - Scopo: Fornisce la mappa di navigazione e valida la struttura del prompt (Logica: WHAT)
+## 🔄 Framework Flow
 
-Nota: L'indice nei prompt lunghi è importante perchè facilita l' LLM a orientarsi e stabilire una **mappa mentale** chiara del documento
+```mermaid
+graph LR
+    U[User Command] -->|"[MODE] + Task"| L[LLM]
+    L -->|Loads| R[README.md]
+    R -->|Parses Mode| T[Phase Templates]
+    T -->|Populates| S[Structured Spec]
+    S -->|Executes| C[Code Output]
+    C --> U
 
-### Esempio Pratico (Inizio del Prompt - JS)
-
-```
-# 🚀 2WHAV Prompt: Agente Decisionale Logistico v1.0 (JavaScript) 🚀
-
-## 1. WHAT: Introduzione e Indice
-
-### What First: Scopo e Risultato Atteso
-Sei un esperto di sistemi decisionali. Il tuo compito è creare il **Motore Decisionale** per un agente che ottimizza la logistica di magazzino.
-L'output **DEVE** essere **SOLO** codice **JavaScript** formattato in un **Oggetto Letterale Unico** (es. `const agentLogic = { ... }`).
-
-### # Indice
-| Sezione | Logica | Scopo |
-| :--- | :--- | :--- |
-| **\# 1. Virtualizzazione** | WHERE | Modello Comportamentale e Priorità del Flusso. |
-| **\# 2. Generazione** | HOW | Regole di sintassi e scaffolding. |
-| **\# 3. Interfaccia** | HOW | Documentazione API. |
-| **\# 4. Augmentation** | AUGMENTATION | Direttive strategiche e creative. |
-| **\# 5. Verification** | VERIFY | Checklist di conformità finale. |
+    style R fill:#e1f5ff
+    style S fill:#fff4e1
+    style C fill:#e1ffe1
 ```
 
-## Virtualizzazione, Generazione, Interfaccia, Augmentation (HOW)
-
-Questa fase definisce tutte le regole operative per l'esecuzione del compito.
-
-### 2. (WHERE): Virtualizzazione (Modello Comportamentale)
-
-Definisce il **modello logico che il codice deve implementare**. Questa fase è dove l'LLM viene istruito non solo sul _tipo_ di codice, ma sulla sua **architettura interna di controllo**. Invece di fornire all'LLM l'intero codice dell'ambiente di destinazione, la **virtualizzazione ne descrive il contesto di esecuzione e le regole astratte**. Ad esempio, si specifica chiaramente che il codice deve essere una **Macchina a Stati Finiti (FSM)**, un **Albero Comportamentale (Behaviour Tree)** o un set di regole, definendo la **struttura** che l'LLM dovrà popolare. Questo permette all'LLM di comprendere a fondo **come il codice generato verrà utilizzato**, ottimizzando il resto delle nozioni fornite nel prompt. Qui si stabilisce l'**ordine gerarchico** e la **priorità assoluta** delle sue decisioni. **Indica qui la descrizione completa del modello operativo: non solo l'architettura (es. FSM), ma anche il ciclo di esecuzione, il flusso dei dati e le priorità decisionali.**
-
-**Componente della Virtualizzazione:**
-
-**Specifica del Flusso**
-
-- Scopo: Stabilisce l'architettura di controllo (es. FSM, Behaviour Tree, ecc.) e la priorità delle decisioni.
-- Requisito Critico: Il modello è un Motore Decisionale con priorità di valutazione (es. Urgenza -> Pianificazione).
-
-#### Esempio Pratico (Motore Decisionale FSM Illustrativo - JS)
+**Phases Execute in This Order:**
 
 ```
-## 2. WHERE: Virtualizzazione (Modello Comportamentale)
-
-### Specifica del Motore Decisionale
-- Il Motore Decisionale (qui illustrato come FSM per chiarezza) deve valutare le sue logiche in **questo ordine di priorità inviolabile**:
-    1.  **URGENZA (Max Priority):** Logiche di sicurezza o critiche (es. 'Evita Collisione').
-    2.  **PIANIFICAZIONE (High Priority):** Sequenze di azioni per completare un compito (es. 'Movimento Verso Area').
-    3.  **STANDARD (Normal Priority):** Logiche di attesa o monitoraggio.
-- buildContext() viene chiamato prima di ogni ciclo decisionale
-- buildContext() valorizza context.x, context.y, context.z
-- Gli stati ricevono context.delta e context.gamma come input
-- Le transizioni valutano prima le condizioni di livello superiore
+WHAT → WHERE (optional) → HOW (Generation + Interface) → AUGMENT (optional) → VERIFY
 ```
 
-### 3. (HOW): Generazione (Regole e Scaffolding COMPLETO)
+---
 
-Questa fase stabilisce le **regole inderogabili per la scrittura del codice**. Il suo obiettivo è duplice: imporre standard per un **codice pulito e robusto** e definire i **flussi obbligatori** e le **limitazioni tecniche** necessarie per l'integrazione. L'LLM riceve qui lo **scaffolding esatto** che deve popolare e le regole sintattiche che deve rispettare, come l'obbligo di usare una specifica convenzione di denominazione o il divieto di usare funzioni moderne non supportate.
+## 🎯 Phase 1: WHAT (Objective) [ALWAYS REQUIRED]
 
-**⚠️ Nota Critica:**
+> **Purpose:** Define the exact output, constraints, and main purpose.
 
-**Questa fase contiene le regole più critiche per la generazione del codice. Nel prompt, queste regole devono essere comunicate con linguaggio prescrittivo forte (OBBLIGATORIO, VIETATO) per massimizzare l'aderenza dell'LLM. La non conformità a queste regole compromette significativamente l'integrazione del codice generato.**
+### Components to Extract/Define
 
-**Componenti della Generazione:**
+| Component                   | What to Specify               | Example                                              |
+| --------------------------- | ----------------------------- | ---------------------------------------------------- |
+| **LLM Role**                | Domain-specific expertise     | "You are an expert in state machines"                |
+| **Task**                    | Precise, measurable objective | "Create FSM for traffic light with 3 states"         |
+| **Output Format**           | Exact structure required      | "Single JavaScript object literal `const x = {...}`" |
+| **Operational Constraints** | Priorities, requirements      | "Priority: Safety > Performance > Simplicity"        |
 
-- **Regole Generali**
+### Template
 
-  - Scopo: Impone standard di stile e compatibilità tecnica.
-  - Requisito Critico: Es: OBBLIGATORIO: Solo function(...) {} (vietate =>). Accesso Helper SOLO tramite agentLogic.helper().
+```markdown
+## WHAT: Objective
 
-- **Scaffolding**
-  - Scopo: Fornisce lo scheletro esatto e i formati obbligatori per le strutture del Motore Decisionale.
-  - Requisito Critico: Es: Deve essere compatibile con l'architettura scelta (Oggetto, FSM, BT, ecc.).
+### Role and Task
 
-#### Esempio Pratico (Scaffolding JavaScript)
+You are a [DOMAIN EXPERT]. Your task is to [SPECIFIC TASK].
 
-⚠️ **NOTA:** Le regole seguenti (es. divieto di arrow functions) sono specifiche per questo esempio di sistema embedded. Nel TUO prompt, definisci SOLO le regole necessarie al TUO ambiente/standard.
+### Expected Output
 
+The output MUST be [EXACT FORMAT].
+[Additional format specifications]
+
+### Operational Constraints
+
+- Priority: [X > Y > Z]
+- [Constraint 1: e.g., "System must be fail-safe"]
+- [Constraint 2: e.g., "Compatible with ES5"]
+
+### Index
+
+| Phase                              | Purpose                | Critical Elements                |
+| ---------------------------------- | ---------------------- | -------------------------------- |
+| [WHERE](#where)                    | Control architecture   | [If applicable: FSM, priorities] |
+| [HOW: Generation](#how-generation) | Syntax rules           | [Language, forbidden patterns]   |
+| [HOW: Interface](#how-interface)   | API contract           | [Available functions only]       |
+| [AUGMENT](#augment)                | Strategic intelligence | [If applicable: optimizations]   |
+| [VERIFY](#verify)                  | Validation             | [Success criteria]               |
 ```
-## 3. HOW: Generazione (Regole e Scaffolding COMPLETO)
 
-### Regole Generali di Generazione del Codice
-* **Sintassi delle Funzioni:** È **OBBLIGATORIO** utilizzare `function(...) { ... }`. **VIETATO UTILIZZARE FUNZIONI LAMBDA (`=>`)**.
+### Population Rules
 
-### Scaffolding del Codice (Template Obbligatorio)
-const agentLogic = {
-  initialState: 'IDLE',
-  memory: { /* Dati persistenti */ },
-  CONSTANTS: { MAX_LOAD: 500 },
+**MANDATORY:**
 
-  updateContext: function(api, externalData) {
-    // Deve restituire l'oggetto 'context'
-    return {};
-  },
+- Derive role from task domain (avoid generic "expert programmer")
+- Specify exact output format (function? class? object literal?)
+- List all constraints mentioned in task or implied by domain
 
-  decideAction: function(api, externalData) {
-    // Logica di decisione seguendo la priorità 2.1
-    const context = agentLogic.updateContext(api, externalData);
-    // [Logica di esecuzione del Motore Decisionale]
-  },
+**FORBIDDEN:**
 
-  // Implementazione di un Helper (Obbligatorio per la verifica)
-  _checkAreaOccupancy: function(areaId) {
-    // Restituisce un booleano
-    return false;
-  }
+- Vague outputs like "working code"
+- Missing format specifications
+- Omitting critical constraints
+
+---
+
+## 🏗️ Phase 2: WHERE (Virtualization) [CONDITIONAL]
+
+> **Purpose:** Define control architecture, decision priorities, and execution flow.
+
+### Include WHERE If Task Has:
+
+- ✅ States and transitions (FSM, State Machine)
+- ✅ Conditional logic with priorities ("if X then Y, else Z")
+- ✅ Decision tree or behavior tree
+- ✅ Multiple evaluation priorities
+- ✅ Phrases like "when X happens" or "prioritize Y over Z"
+
+### Omit WHERE If Task Is:
+
+- ❌ Pure functional (input → processing → output, no state)
+- ❌ Linear flow (A → B → C with no branching)
+- ❌ Single responsibility with no decisions
+
+### What to Define
+
+| Aspect                 | Specification                  | Output                      |
+| ---------------------- | ------------------------------ | --------------------------- |
+| **Control Model**      | FSM / Behaviour Tree / Ruleset | Explicit architecture name  |
+| **States**             | All possible states            | List with descriptions      |
+| **Transitions**        | State → State mappings         | With trigger conditions     |
+| **Priority Hierarchy** | Inviolable evaluation order    | Numbered list (1 = highest) |
+| **Data Flow**          | How context is built/passed    | Function call sequence      |
+| **Execution Cycle**    | Step-by-step process           | Ordered operations          |
+
+### Template
+
+```markdown
+## WHERE: Virtualization
+
+### Control Architecture
+
+The system implements a [FSM / BEHAVIOUR TREE / RULESET].
+
+### States and Transitions
+
+| State     | Triggers    | Transitions To | Priority       |
+| --------- | ----------- | -------------- | -------------- |
+| [STATE_1] | [Condition] | [STATE_2]      | [HIGH/MED/LOW] |
+| [STATE_2] | [Condition] | [STATE_3]      | [HIGH/MED/LOW] |
+
+### Priority Hierarchy (INVIOLABLE EVALUATION ORDER)
+
+The system MUST evaluate decisions in this order:
+
+| Order | Priority Level | Focus                       | Example Conditions             |
+| ----- | -------------- | --------------------------- | ------------------------------ |
+| 1     | **EMERGENCY**  | Critical safety/termination | Game over, collision imminent  |
+| 2     | **TACTICAL**   | Strategic optimization      | Block opponent, find best path |
+| 3     | **STANDARD**   | Normal operation            | Default behavior, idle state   |
+
+**CRITICAL:** Transitions at higher priority levels are evaluated BEFORE lower levels. This order is inviolable.
+
+### Execution Cycle
+
+1. `buildContext(api, externalData)` → Constructs decision context
+2. `evaluateTransitions(context)` → Checks conditions in priority order (1→2→3)
+3. `executeStateAction(api, context)` → Performs current state's action
+4. [Repeat from step 1]
+
+### Data Flow
+
+- **Input:** `api` (system interface) + `externalData` (external state)
+- **Context Construction:** `buildContext()` populates context object
+- **Decision Making:** Transitions receive `context` as input
+- **Action Execution:** Current state uses `context` to decide action
+```
+
+### Population Rules
+
+**MANDATORY if WHERE is included:**
+
+- Identify ALL states from task description
+- Define transitions with clear trigger conditions
+- Specify priority hierarchy with explicit ordering
+- Document execution cycle (what calls what, in what order)
+
+**FORBIDDEN:**
+
+- Ambiguous priorities ("important" vs "very important")
+- Missing states or transitions
+- Undefined data flow between components
+
+---
+
+## ⚙️ Phase 3: HOW - Part A (Generation Rules) [ALWAYS REQUIRED]
+
+> **Purpose:** Define syntactic rules, forbidden patterns, and exact scaffolding.
+
+### What to Specify
+
+| Category               | Specification Type  | Example                                             |
+| ---------------------- | ------------------- | --------------------------------------------------- |
+| **Syntax Rules**       | MANDATORY patterns  | "Use `function() {}`, FORBIDDEN: `() => {}`"        |
+| **Output Structure**   | Exact format        | "Single object literal: `const name = {...}`"       |
+| **Naming Conventions** | Required style      | "camelCase for functions, UPPER_CASE for constants" |
+| **Compatibility**      | Language version    | "ES5 only (no let/const/arrow functions)"           |
+| **Access Patterns**    | How to call helpers | "Via parent object: `obj.helper()`, NOT `helper()`" |
+
+### Template
+
+```markdown
+## HOW: Generation (Syntax Rules and Scaffolding)
+
+### Mandatory Rules
+
+> ⚠️ Use prescriptive language: MANDATORY, FORBIDDEN, MUST, MUST NOT
+
+| Rule Category         | Requirement                | ✅ Correct          | ❌ Incorrect           |
+| --------------------- | -------------------------- | ------------------- | ---------------------- |
+| **Function Syntax**   | MANDATORY: `function() {}` | `function foo() {}` | `const foo = () => {}` |
+| **Output Format**     | MANDATORY: Object literal  | `const x = { ... }` | `class X { ... }`      |
+| **Variable Scope**    | MANDATORY: Explicit access | `obj.method()`      | `method()`             |
+| **[Domain-Specific]** | [Custom rule]              | [Example]           | [Counter-example]      |
+
+### Forbidden Patterns
+
+- ❌ Arrow functions (`=>`) [if ES5 target]
+- ❌ `let` / `const` keywords [if ES5 target]
+- ❌ Global function calls not in API contract
+- ❌ Direct property mutation without methods
+- ❌ [Domain-specific forbidden patterns]
+
+### Scaffolding (EXACT TEMPLATE)
+
+\`\`\`[LANGUAGE]
+[Provide complete, copy-pasteable template]
+
+Example:
+const systemName = {
+// ===== SECTION A: CONFIGURATION =====
+initialState: '[INITIAL_STATE]',
+memory: { /_ persistent data _/ },
+constants: { /_ immutable values _/ },
+
+// ===== SECTION B: CONTEXT BUILDER =====
+buildContext: function(api, externalData) {
+// MUST return object with all context fields
+return {
+// [List expected context fields]
 };
+},
+
+// ===== SECTION C: MAIN LOGIC =====
+[mainFunction]: function(api, externalData) {
+const context = systemName.buildContext(api, externalData);
+// [Implementation logic]
+},
+
+// ===== SECTION D: HELPERS =====
+\_helperFunction: function([params]) {
+// [Helper implementation]
+return [result];
+}
+};
+\`\`\`
+
+### Scaffolding Population Rules
+
+- **MUST** populate all sections (A, B, C, D)
+- **MUST** implement all helper functions referenced in main logic
+- **MUST** follow naming conventions specified above
+- **MUST NOT** add sections or functions not in template
 ```
 
-### 4. (HOW): Interfaccia (Protocollo di Interazione)
+### Population Rules
 
-Questa fase definisce gli **unici mezzi con cui il codice può interagire con il sistema** esterno. Lo scopo non è solo elencare le funzioni, ma documentarle con precisione assoluta: **tipi di input e output, eccezioni gestite e comportamenti specifici**. L'LLM deve trattare questo **Protocollo di Interazione** come un contratto API inviolabile e non può in alcun modo invocare funzioni o metodi non esplicitamente definiti in questa sezione.
+**MANDATORY:**
 
-**Componente dell'Interfaccia:**
+- Include language-specific syntax rules
+- Provide complete scaffolding (no placeholders like "// TODO")
+- List ALL forbidden patterns for the target environment
+- Use strong prescriptive language (MANDATORY, FORBIDDEN)
 
-- **API Table**
+**FORBIDDEN:**
 
-  - Scopo: Documenta ogni funzione di interazione.
-  - Output: Il codice generato NON DEVE usare chiamate API non documentate.
-  - Requisito Critico: [specificato nelle API documentate]
-
-#### Esempio Pratico
-
-```
-## 4. HOW: Interfaccia (API di Interazione)
-Il codice interagisce SOLO tramite l'oggetto `api`:
-
-| Funzione | Input | Output | Nota Critica |
-|----------|-------|--------|--------------|
-| `api.getLocation()` | void | `object` {x, y} | Posizione corrente dell'agente. |
-| `api.requestPath(target)` | `object` {x, y} | `boolean` | Richiede un percorso; **FALLIBILE**. |
-| `api.loadItem(item_id)` | `string` | `boolean` | Tenta di caricare un oggetto. |
-```
-
-### 5. (Augment): Augmentation (Direttive Strategiche)
-
-Questa fase richiede all'LLM di implementare **logiche avanzate oltre il requisito minimo** specificato nel WHAT. L'obiettivo è ottenere codice non solo funzionale, ma **ottimizzato, resiliente e strategicamente robusto**.
-
-L'Augmentation specifica esplicitamente:
-
-- Meccanismi di ottimizzazione (es. costo opportunità, caching)
-- Logiche di resilienza (es. retry, fallback, validazione)
-- Funzionalità preventive (es. risk assessment, anomaly detection)
-
-Queste logiche devono essere **richieste esplicitamente** in questa sezione, anche se non erano menzionate nel WHAT iniziale.
-
-**Componente dell'Augmentation:**
-
-• **Creativity Directive**
-
-- Scopo: Inietta intelligenza e complessità tattica.
-- Direttiva Strategica: Richiede l'implementazione di logiche avanzate non esplicitate nello scaffolding.
-
-#### Esempio Pratico
-
-```
-## 5. HOW: Augmentation (Direttive Strategiche)
-
-**CREATIVITY DIRECTIVE:**
-L'LLM DEVE implementare logiche che vanno oltre la risoluzione del compito base ("vai a X e carica Y"):
-
-1.  **OTTIMIZZAZIONE STRATEGICA:** Non calcolare solo il percorso più breve, ma implementare un sistema che valuti il **costo opportunità** per ogni compito disponibile (tempo di percorrenza + priorità dell'oggetto) prima di prendere una decisione.
-2.  **RESILIENZA:** Il Motore Decisionale deve includere meccanismi di **prevenzione degli errori**, come un sistema di **caching della memoria** per le posizioni critiche o un meccanismo di *timeout* e *retry* avanzato non richiesto esplicitamente nel WHAT.
-3.  **PENSIERO CRITICO:** Aggiungi un metodo helper (`agentLogic._calculateRisk`) che valuti il rischio di collisione basato sui dati storici.
-```
-
-### 6. VERIFY: Verification (Verifica)
-
-L'ultima fase richiede all'LLM l'autoverifica del rispetto di tutti i requisiti contrattuali.
-
-#### (You Did Well): Verification (Controllo Qualità Finale)
-
-Questa fase serve come **reminder finale** dei requisiti più critici. La checklist viene inclusa alla fine del prompt per: - Rafforzare le regole chiave prima della generazione dell'output - Fornire un riferimento rapido per la validazione manuale - Aumentare la probabilità che l'LLM consideri questi vincoli durante la generazione **Nota:** Gli LLM non eseguono verifica post-generazione autonoma. La checklist influenza il processo generativo, ma la validazione finale rimane responsabilità dell'utente.
-
-**Componente della Verification:**
-
-**Checklist**
-
-- Scopo: Un riassunto dei requisiti più critici di Virtualization e Generation.
-- Requisito di Verifica: Reminder per l'LLM + strumento di validazione manuale per l'utente
-
-#### Esempio Pratico
-
-Questa è l'**ultima fase** e funge da **reminder finale** dei requisiti critici. La checklist rafforza le regole chiave durante la generazione dell'output e fornisce uno strumento di validazione per l'utente. Includi questa sezione alla fine del prompt per massimizzare la probabilità che l'LLM consideri questi vincoli durante la generazione del codice.
-
-```
-## 6. VERIFY: Verification (Checklist di Conformità)
-
-Prima di fornire l'output, verifica che il codice rispetti:
-* [ ] L'output è un singolo oggetto letterale JavaScript?
-* [ ] Sono state usate SOLO `function(...) {}` (no `=>`)?
-* [ ] La logica aderisce alla priorità **Urgenza** $\rightarrow$ **Pianificazione** $\rightarrow$ **Standard**?
-* [ ] È stata implementata la logica di **caching della memoria** e **costo opportunità**?
-```
-
-## 🧩 Modularità e Flessibilità del Framework 2WHAV
-
-Sebbene il framework **2WHAV** sia stato progettato per affrontare la massima complessità, la sua architettura è **intrinsecamente modulare**. Non tutte le fasi sono obbligatorie in ogni scenario, permettendo di adattare il livello di rigore al compito specifico.
-
-### Flessibilità delle Fasi:
-
-- **Virtualizzazione** (Where)
-
-  - Flessibilità: Condensabile/Omettibile
-  - Condizione per l'Omissione: Se si utilizza un'architettura o una libreria altamente nota all'LLM (es. XState o Redux), la sua definizione può essere spostata nella fase Generazione (HOW), usando lo scaffolding come base. Tuttavia, la Gerarchia di Priorità deve essere definita altrove.
-
-- **Augmentation** (Augment?)
-
-  - Flessibilità: Facoltativa
-  - Condizione per l'Omissione: È la fase del valore aggiunto strategico. Può essere omessa se l'obiettivo è solo un codice funzionale e conforme ai requisiti minimi, senza bisogno di intelligenza tattica o prevenzione degli errori complessi.
-
-Le fasi **WHAT (Scopo), HOW (Generazione/Interfaccia),** e **VERIFY (You Did Well?)** costituiscono invece il **fondamento ineliminabile** del framework e devono sempre essere presenti per garantire la coerenza e la qualità dell'output.
-
-## 🎯 Quando Usare 2WHAV?
-
-Il framework è modulare: adatta le fasi alle tue esigenze. Questi esempi sono indicativi, non vincolanti.
-
-**Livelli di Complessità e Fasi Suggerite:**
-
-- **❌BASSA COMPLESSITÀ**
-
-  - Fasi suggerite: Prompt classico
-  - Esempio di applicazione: Funzione di utilità, helper semplici
-
-- **MEDIA COMPLESSITÀ - LINEARE**
-
-  - Fasi suggerite: WHAT + HOW + VERIFY
-  - Esempio di applicazione: Client API, parser, validator, data transformer
-
-- **MEDIA COMPLESSITÀ - DECISIONALE**
-
-  - Fasi suggerite: WHAT + WHERE + HOW + VERIFY
-  - Esempio di applicazione: Retry logic con stati, workflow con branch condizionali
-
-- **ALTA COMPLESSITÀ - STRATEGICA**
-
-  - Fasi suggerite: WHAT + WHERE + HOW + AUGMENT + VERIFY(completo)
-  - Esempio di applicazione: Bot con FSM, sistema multi-priorità, agente decisionale
-
-\*Nota: WHAT è sempre implicito. WHERE (Virtualizzazione) è utile solo per sistemi con logiche decisionali complesse.
-
-## 🎯 Esempio di Prompt Completo Unificato 2WHAV (JavaScript)
-
-Questo blocco di testo è il prompt finale coeso che unisce tutte le sezioni di cui sopra.
-
-**⚠️ Direttiva Importante per l'LLM:**
-
-**ATTENZIONE:** IL seguente esempio è scritto **esclusivamente come materiale esplicativo e dimostrativo** del framework **2WHAV** e delle sue regole di applicazione. **Non implementare questo codice** a meno che non ti venga esplicitamente richiesto di analizzare o riassumere l'esempio specifico. Focus: valutare la struttura non i dettagli.
-
-```
-# 🚀 2WHAV Prompt: Agente Decisionale Logistico v1.0 (JavaScript) 🚀
-
-## I. Nota di Generalizzazione ⚠️
-Nota: Il Motore Decisionale FSM è qui usato come esempio astratto. Il codice finale deve essere un oggetto JavaScript.
-
-## 1. WHAT: Introduzione e Indice
-
-### # What First: Scopo e Risultato Atteso
-Sei un esperto di sistemi decisionali. Il tuo compito è creare il **Motore Decisionale** per un agente che ottimizza la logistica di magazzino.
-L'output **DEVE** essere **SOLO** codice **JavaScript** formattato in un oggetto letterale `const agentLogic = { ... }`.
-
-### # Indice
-| Sezione | Logica | Scopo |
-| :--- | :--- | :--- |
-| **\# Virtualizzazione** | HOW | Modello Comportamentale e Priorità del Flusso. |
-| **\# Generazione** | HOW | Regole di sintassi e scaffolding. |
-| **\# Interfaccia** | HOW | Documentazione API. |
-| **\# Augmentation** | HOW | Direttive strategiche e creative. |
-| **\# Verification** | VERIFY | Checklist di conformità finale. |
-
-## 2. HOW: Virtualizzazione (Modello Comportamentale)
-
-### Contratto del Motore Decisionale
-Il Motore Decisionale (che può essere FSM, Behaviour Tree o Ruleset) deve valutare le sue logiche in **questo ordine di priorità inviolabile**:
-1.  **URGENZA (Max Priority):** Logiche di sicurezza o critiche.
-2.  **PIANIFICAZIONE (High Priority):** Sequenze di azioni per completare un compito.
-3.  **STANDARD (Normal Priority):** Logiche di attesa o monitoraggio.
-
-## 3. HOW: Generazione (Regole e Scaffolding COMPLETO)
-
-### 3.1. Regole Generali di Generazione del Codice
-* **Output Obbligatorio:** L'output è un singolo oggetto letterale `agentLogic`.
-* **Sintassi delle Funzioni:** È **OBBLIGATORIO** utilizzare `function(...) { ... }`. **VIETATO UTILIZZARE FUNZIONI LAMBDA (`=>`)**.
-* **Accesso Helper:** Accedi alle helper function **SOLO** tramite `agentLogic.nomeHelper()`.
-
-### 3.2. Scaffolding del Codice (CONTRATTO INVIOLABILE)
-javascriptconst agentLogic = {  initialState: 'IDLE', // Stato iniziale del Motore Decisionale  memory: { /* Dati persistenti */ },  CONSTANTS: {     MAX_LOAD: 500   },    updateContext: function(api, externalData) {     // DEVE restituire l'oggetto 'context' per la decisione    return {};  },    decideAction: function(api, externalData) {    // DEVE contenere la logica di valutazione della priorità 2.1    const context = agentLogic.updateContext(api, externalData);    // [Logica di esecuzione del Motore Decisionale]  },    _helperCalculateCost: function(path) {    // [Implementazione Helper]    return 0;  }};
-
-
-4. HOW: Interfaccia (API di Interazione)
-
-### 4.1. API Table
-
-Il codice interagisce SOLO tramite l'oggetto `api`:
-
-| Funzione | Input | Output | Nota Critica |
-| --- | --- | --- | --- |
-| `api.getLocation()` | void | `object` {x, y} | Posizione corrente. |
-| `api.requestPath(target)` | `object` {x, y} | `boolean` | Richiede un percorso; FALLIBILE. |
-| `api.loadItem(item_id)` | `string` | `boolean` | Tenta di caricare un oggetto. |
-
-## 5. HOW: Augmentation (Direttive Strategiche)
-
-### 5.1. Creativity Directive
-
-L'LLM deve implementare un sistema di **caching della memoria** per le posizioni critiche e deve calcolare un **costo opportunità** per ogni compito, non solo il percorso più breve.
-
-## 6. VERIFY: Verification (Controllo Finale)
-
-### 6.1. Checklist di Conformità Finale
-
-L'LLM **DEVE** verificare:
-
-- [ ] L'output è un singolo oggetto letterale JavaScript?
-
-- [ ] Sono state usate SOLO `function(...) {}` (no `=>`)?
-
-- [ ] La logica aderisce alla priorità **Urgenza** **Pianificazione** **Standard**?
-
-- [ ] È stata implementata la logica di **caching della memoria** e **costo opportunità**?
-```
-
-## 🚦 Esempio Minimalista 2WHAV: Sistema Semaforo Intelligente (XState v5)
-
-**⚠️ Direttiva Importante per l'LLM:**
-
-**ATTENZIONE:** IL seguente esempio è scritto **esclusivamente come materiale esplicativo e dimostrativo** del framework **2WHAV** e delle sue regole di applicazione. **Non implementare questo codice** a meno che non ti venga esplicitamente richiesto di analizzare o riassumere l'esempio specifico. Focus: valutare la struttura non i dettagli.
-
-```
-# 🚦 2WHAV Prompt: Sistema Semaforo Intelligente v2.0 (XState)
-
-## 1. WHAT: Introduzione e Indice
-
-### 1.1. What First: Scopo e Risultato Atteso
-Sei un programmatore esperto di sistemi a stati finiti. Il tuo compito è creare una **State Machine XState** per un semaforo stradale intelligente che gestisce:
-- **Ciclo normale:** Verde (30s) → Giallo (5s) → Rosso (30s) → loop
-- **Modalità emergenza:** Lampeggio giallo (override per veicoli di emergenza)
-- **Modalità manutenzione:** Tutte le luci spente (override per operazioni di manutenzione)
-
-**Output Richiesto:** Codice JavaScript completo utilizzando `createMachine()` di XState v5.
-
-### 1.2. Indice
-| Sezione | Logica | Scopo |
-|---------|--------|-------|
-| **V: Virtualizzazione** | WHERE | Framework target e architettura stati |
-| **G: Generazione** | HOW | Schema XState e regole |
-| **I: Interfaccia** | HOW | API di controllo hardware |
-| **Verification** | VERIFY | Checklist di conformità |
+- Generic rules like "write clean code"
+- Incomplete scaffolding with "..." or "TODO"
+- Ambiguous rules like "prefer X over Y" (use MANDATORY/FORBIDDEN)
 
 ---
 
-## 2. WHERE: Virtualizzazione (Framework e Architettura)
+## 🔌 Phase 4: HOW - Part B (Interface Contract) [ALWAYS REQUIRED]
 
-### 2.1. Framework Target
-**XState v5** (https://xstate.js.org/)
+> **Purpose:** Document the ONLY functions the code can use to interact with the external system.
 
-Il codice generato deve essere compatibile con XState v5 e utilizzare:
-- `createMachine()` per definire la state machine
-- `entry` actions per azioni all'ingresso di uno stato
-- `after` per transizioni temporizzate
-- `always` per transizioni condizionali sempre attive (usate per la priorità)
-- `guards` per condizioni di transizione
+### Fundamental Principle
 
-### 2.2. Architettura Stati
+**The generated code can ONLY call functions explicitly documented in this section.**  
+Any function not listed here MUST NOT appear in the generated code.
 
+### Template
 
-Ciclo Normale:
-GREEN (30s) → YELLOW (5s) → RED (30s) → loop
+```markdown
+## HOW: Interface (API Contract)
 
-Stati Override (priorità superiore):
-EMERGENCY (lampeggio giallo - priorità alta)
-MAINTENANCE (luci spente - priorità massima)
+### Available Functions
 
-### 2.3. Gerarchia di Priorità (INVIOLABILE)
+The code interacts EXCLUSIVELY through the `api` object. No other functions or globals are available.
 
-La priorità viene implementata tramite **ordine di valutazione delle transizioni `always`** in XState.
+| Function               | Input        | Output | Behavior    | Critical Notes                          |
+| ---------------------- | ------------ | ------ | ----------- | --------------------------------------- |
+| `api.function1()`      | `type`       | `type` | Description | Synchronous/Async, Can fail/Never fails |
+| `api.function2(param)` | `type`       | `type` | Description | Range limits, Error conditions          |
+| `api.function3(x, y)`  | `type, type` | `type` | Description | Side effects, State changes             |
 
-**In ogni stato del ciclo normale (green, yellow, red), le transizioni `always` devono essere in questo ordine:**
+### API Contract Rules
 
-| Ordine | Priorità | Target | Guard | Descrizione |
-|--------|----------|--------|-------|-------------|
-| 1 | **MASSIMA** | `maintenance` | `isMaintenanceMode` | Override assoluto per manutenzione |
-| 2 | **ALTA** | `emergency` | `isEmergency` | Override per veicoli emergenza |
-| 3 | **NORMALE** | (stato successivo) | timeout `after` | Transizione temporizzata normale |
+- ✅ All API functions are [synchronous/asynchronous - specify]
+- ✅ `api` object is globally available in the execution context
+- ✅ Functions marked "Can fail" may throw exceptions or return error values
+- ❌ NO other functions exist (no `fetch`, `XMLHttpRequest`, `console.*`, etc.)
+- ❌ NO direct DOM access or browser APIs
+- ❌ [Add domain-specific restrictions]
 
-**REGOLA FONDAMENTALE:** Le transizioni `always` hanno priorità sulle transizioni `after`. L'ordine nell'array `always` determina la priorità di valutazione.
+### Context Construction Contract
 
----
+If WHERE phase is present, specify how context is built:
 
-## 3. HOW: Generazione (Schema XState e Regole)
+| Context Field    | Type   | Source           | Example Value | Required |
+| ---------------- | ------ | ---------------- | ------------- | -------- |
+| `context.field1` | `type` | `api.getX()`     | `value`       | YES/NO   |
+| `context.field2` | `type` | `externalData.y` | `value`       | YES/NO   |
 
-### 3.1. Regole di Generazione
+**buildContext() MUST populate all fields marked as Required.**
 
-> **⚠️ NOTA:** Le regole seguenti derivano dalle convenzioni di XState v5.
+### Error Handling Requirements
 
-* **Struttura Output:** Usa `createMachine()` da XState
-* **Stati:** Definiti nell'oggetto `states`, nomi in lowercase (es. `green`, `emergency`)
-* **Actions:** Definite nell'oggetto `actions` (secondo parametro di `createMachine`)
-* **Guards:** Definite nell'oggetto `guards` (secondo parametro di `createMachine`)
-* **Entry Actions:** Ogni stato del ciclo deve avere `entry: 'nomeAction'` per chiamare l'API hardware
-* **Transizioni Temporali:** Usa `after: { millisecondi: 'targetState' }`
-* **Transizioni Condizionali:** Usa `always: [{ target: '...', guard: '...' }]`
-
-### 3.2. Scaffolding XState
-
-import { createMachine, interpret } from 'xstate';
-
-const trafficLightMachine = createMachine({
-  id: 'trafficLight',
-  initial: 'green',
-
-  context: {
-    // Context (opzionale, può essere usato per stato interno)
-  },
-
-  states: {
-    green: {
-      entry: 'activateGreenLight',
-
-      // Transizioni prioritarie (SEMPRE IN QUESTO ORDINE)
-      always: [
-        { target: 'maintenance', guard: 'isMaintenanceMode' },
-        { target: 'emergency', guard: 'isEmergency' }
-      ],
-
-      // Transizione temporizzata normale
-      after: {
-        30000: 'yellow'  // 30 secondi
-      }
-    },
-
-    yellow: {
-      entry: 'activateYellowLight',
-
-      always: [
-        { target: 'maintenance', guard: 'isMaintenanceMode' },
-        { target: 'emergency', guard: 'isEmergency' }
-      ],
-
-      after: {
-        5000: 'red'  // 5 secondi
-      }
-    },
-
-    red: {
-      entry: 'activateRedLight',
-
-      always: [
-        { target: 'maintenance', guard: 'isMaintenanceMode' },
-        { target: 'emergency', guard: 'isEmergency' }
-      ],
-
-      after: {
-        30000: 'green'  // 30 secondi
-      }
-    },
-
-    emergency: {
-      entry: 'activateEmergencyBlink',
-
-      always: [
-        { target: 'maintenance', guard: 'isMaintenanceMode' },
-        // Ritorna a green quando emergenza termina
-        { target: 'green', guard: ({ context }) => !context.isEmergency }
-      ]
-    },
-
-    maintenance: {
-      entry: 'deactivateAllLights',
-
-      always: [
-        // Ritorna a green quando manutenzione termina
-        { target: 'green', guard: ({ context }) => !context.maintenanceMode }
-      ]
-    }
-  }
-}, {
-  // ===== ACTIONS =====
-  actions: {
-    activateGreenLight: () => {
-      api.setLight('GREEN');
-    },
-
-    activateYellowLight: () => {
-      api.setLight('YELLOW');
-    },
-
-    activateRedLight: () => {
-      api.setLight('RED');
-    },
-
-    activateEmergencyBlink: () => {
-      api.blinkYellow();
-    },
-
-    deactivateAllLights: () => {
-      api.setLight('OFF');
-    }
-  },
-
-  // ===== GUARDS =====
-  guards: {
-    isMaintenanceMode: () => {
-      return api.isMaintenanceModeActive();
-    },
-
-    isEmergency: () => {
-      return api.isEmergencyVehicleDetected();
-    }
-  }
-});
-
-// Creazione dell'interprete (opzionale, per eseguire la macchina)
-const service = interpret(trafficLightMachine).start();
-
-
----
-
-## 4. HOW: Interfaccia (API di Controllo Hardware)
-
-### 4.1. Tabella API
-
-Il codice interagisce **ESCLUSIVAMENTE** tramite l'oggetto globale `api`. Ogni altra interazione è **VIETATA**.
-
-| Funzione | Input | Output | Descrizione | Nota Critica |
-| --- | --- | --- | --- | --- |
-| `api.setLight(color)` | `string`: `'GREEN'`, `'YELLOW'`, `'RED'`, `'OFF'` | `void` | Imposta il colore del semaforo fisico | Chiamata **obbligatoria** in ogni entry action |
-| `api.blinkYellow()` | `void` | `void` | Attiva modalità lampeggio giallo (gestito dal controller hardware) | Solo per stato `emergency` |
-| `api.isEmergencyVehicleDetected()` | `void` | `boolean` | Verifica se sensore rileva veicolo di emergenza | Può cambiare in tempo reale |
-| `api.isMaintenanceModeActive()` | `void` | `boolean` | Verifica se manutenzione è attiva | Impostato manualmente da operatore |
-
-### 4.2. Note sull'API
-
-- **Sincronicità:** Tutte le chiamate API sono sincrone
-- **Disponibilità:** L'oggetto `api` è globale e sempre disponibile
-- **Gestione Errori:** Le API non sollevano eccezioni (sono fail-safe)
-
----
-
-## 5. VERIFY: Verification (Checklist di Conformità)
-
-### 5.1. Checklist Obbligatoria
-
-L'LLM **DEVE** autocontrollare questi requisiti prima di fornire l'output:
-
-#### Struttura XState
-
-- [ ] Il codice usa `createMachine()` da XState v5?
-- [ ] La macchina ha `id: 'trafficLight'` e `initial: 'green'`?
-- [ ] Ci sono esattamente 5 stati: `green`, `yellow`, `red`, `emergency`, `maintenance`?
-
-#### Entry Actions
-
-- [ ] Ogni stato ha un `entry` action definito?
-- [ ] Gli entry actions sono definiti nell'oggetto `actions` (secondo parametro di `createMachine`)?
-- [ ] Ogni entry action chiama la funzione API appropriata (`api.setLight()` o `api.blinkYellow()`)?
-
-#### Gerarchia di Priorità (CRITICO)
-
-- [ ] Lo stato `green` ha un array `always` con 2 transizioni nell'ordine: `maintenance`, `emergency`?
-- [ ] Lo stato `yellow` ha un array `always` con 2 transizioni nell'ordine: `maintenance`, `emergency`?
-- [ ] Lo stato `red` ha un array `always` con 2 transizioni nell'ordine: `maintenance`, `emergency`?
-- [ ] La priorità è implementata tramite **ordine di valutazione** nell'array `always`?
-
-#### Guards
-
-- [ ] Le guards sono definite nell'oggetto `guards` (secondo parametro di `createMachine`)?
-- [ ] Esiste una guard `isMaintenanceMode` che chiama `api.isMaintenanceModeActive()`?
-- [ ] Esiste una guard `isEmergency` che chiama `api.isEmergencyVehicleDetected()`?
-
-#### Transizioni Temporizzate
-
-- [ ] Lo stato `green` ha `after: { 30000: 'yellow' }`?
-- [ ] Lo stato `yellow` ha `after: { 5000: 'red' }`?
-- [ ] Lo stato `red` ha `after: { 30000: 'green' }`?
-
-#### Stati Override
-
-- [ ] Lo stato `emergency` ha una transizione `always` verso `green` quando l'emergenza termina?
-- [ ] Lo stato `maintenance` ha una transizione `always` verso `green` quando la manutenzione termina?
-- [ ] Entrambi gli stati override verificano anche `maintenance` come priorità massima?
-
----
-
-## 6. OUTPUT ATTESO
-
-L'LLM deve generare il codice JavaScript completo che implementa tutti i requisiti sopra specificati. Il codice deve essere:
-
-- **Immediatamente eseguibile** in un ambiente con XState v5 installato
-
-- **Conforme al 100%** alla checklist 5.1
-
-- **Sintatticamente corretto** secondo le convenzioni XState
-
-- **Completo** (nessun placeholder o commento "TODO")
+- Functions marked "Can fail" MUST be wrapped in try/catch
+- [Specify fallback behavior for critical failures]
+- [Specify if any functions have retry logic]
 ```
 
-## Esempio di Applicazione Concreta: Bot Tris (V3)
+### Population Rules
 
-Per dimostrare l'efficacia e la rigorosità del framework **2WHAV**, di seguito è riportato l'esempio di un prompt di alto livello che lo utilizza per un problema specifico e complesso: la creazione di un bot di Tris imbattibile.
+**MANDATORY:**
 
-In questo caso, il framework non è solo un _template_ astratto, ma un **contratto inviolabile** che disciplina il codice, la strategia (_Augmentation_), e la sua esecuzione (_Virtualizzazione_). L'LLM, ricevendo questo prompt, non può semplicemente generare codice, ma è obbligato a incorporare un preciso modello decisionale a priorità fissa e funzioni di difesa strategica (_findForkMove_).
+- List EVERY function the code needs to call
+- Specify exact input/output types
+- Document error conditions and failure modes
+- Mark synchronous vs asynchronous operations
+- If WHERE exists, define context construction contract
 
-**RISULTATO ATTESO DALL'LLM:** Un singolo blocco di codice JavaScript completamente funzionante che implementa la logica FSM descritta, garantendo che l'ordine delle transizioni rispecchi perfettamente la gerarchia di difesa (_Blocco Vittoria_ prima di _Vittoria Propria_).
+**FORBIDDEN:**
 
-**⚠️ Direttiva Importante per l'LLM:**
+- Vague descriptions like "gets data"
+- Missing error behavior specifications
+- Unlisted functions appearing in generated code
+- Assuming functions exist without documentation
 
-**ATTENZIONE:** IL seguente esempio è scritto **esclusivamente come materiale esplicativo e dimostrativo** del framework **2WHAV** e delle sue regole di applicazione. **Non implementare questo codice** a meno che non ti venga esplicitamente richiesto di analizzare o riassumere l'esempio specifico. Focus: valutare la struttura, non i dettagli.
+---
 
-````
-PROMPT DEFINITIVO PER BOT TRIS (V3)
+## 🚀 Phase 5: AUGMENT (Strategic Intelligence) [CONDITIONAL]
 
-Sei un Programmatore Specializzato in Intelligenza Artificiale (AI) di Livello Esperto. Il tuo compito è generare la logica FSM completa per un bot di Tris (Tic-Tac-Toe) in Javascript. Il bot gioca come Giocatore O (PLAYER_O). Devi garantire che il bot NON POSSA ESSERE SCONFITTO dall'avversario tramite forchette o altre trappole strategiche, rispettando il seguente contratto 2WHAVVA
+> **Purpose:** Request advanced logic beyond minimum requirements: optimization, resilience, intelligence.
 
-## 1. WHAT: Introduzione e Indice
+### Include AUGMENT If Task Needs:
 
-### 1.1. What First: Scopo e Risultato Finale
-SCOPO: Implementare la logica FSM completa per un bot di Tris (Giocatore O) con un livello di strategia ottimale (perfetto giocatore non perdente).
-RISULTATO FINALE: Un singolo oggetto letterale Javascript ({ ... }) che aderisce rigorosamente allo scaffolding.
+- ✅ Performance optimization (caching, algorithms, efficiency)
+- ✅ Error resilience (retry, fallback, graceful degradation)
+- ✅ Strategic intelligence (heuristics, risk assessment, adaptation)
+- ✅ Production-level robustness
+- ✅ User explicitly requests optimized/intelligent solution
 
-### 1.2. Indice
-| Sezione | Logica | Scopo |
-| :--- | :--- | :--- |
-| **\# Virtualizzazione** | WHERE | Contratto del Motore con Priorità Assoluta. |
-| **\# Interfaccia** | HOW | Contratto API e Context. |
-| **\# Generazione** | HOW | Contratto del Codice e Struttura. |
-| **\# Augmentation** | Direttiva di Contribuzione Strategica e Intelligenza. |
-| **\# Verification** | VERIFY | Autocontrollo Obbligatorio e Rigoroso. |
+### Omit AUGMENT If Task Is:
 
-## 2. HOW: Virtualizzazione (Contratto del Motore con Priorità Assoluta)
+- ❌ Prototype or proof-of-concept
+- ❌ Educational example
+- ❌ User only needs basic functionality
 
-### 2.1. Gestione del Turno
-Il dato cruciale per la gestione del turno è externalData.isBotTurn (boolean), utilizzato per popolare context.isOurTurn nella Sezione 3.
+### Augmentation Categories
 
-### 2.2. Flusso del Comportamento (Gerarchia FSM - ORDINE INVIOLABILE)
-L'ordine di valutazione delle transizioni è il seguente. La difesa (2.2.2 e 2.2.3) ha la priorità assoluta sull'attacco (2.2.4).
-| Indice | Livello | Focus | Priorità |
-| :--- | :--- | :--- | :--- |
-| 2.2.1 | EMERGENCY | Termine Gioco | Massima (Uscita) |
-| 2.2.2 | EMERGENCY | Blocco Vittoria Avv. | Critica (Difesa Immediata) |
-| 2.2.3 | EMERGENCY | Prevenzione Forchetta | Critica (Difesa Strategica) |
-| 2.2.4 | EMERGENCY | Vittoria Propria | Alta (Attacco Immediato) |
-| 2.2.5 | TACTICAL | Creazione Forchetta | Media (Attacco Strategico) |
-| 2.2.6 | TACTICAL | Mossa di Ripiego | Standard |
+| Category         | Focus                          | Example Implementations                                     |
+| ---------------- | ------------------------------ | ----------------------------------------------------------- |
+| **OPTIMIZATION** | Efficiency, speed, memory      | Caching, lookup tables, O(n) algorithms, lazy evaluation    |
+| **RESILIENCE**   | Error handling, recovery       | Exponential backoff, circuit breaker, retry with timeout    |
+| **INTELLIGENCE** | Decision quality, adaptability | Risk assessment, opportunity cost, pattern recognition      |
+| **PREVENTIVE**   | Anticipate problems            | Anomaly detection, resource monitoring, deadlock prevention |
 
-## 3. HOW: I: Interfaccia (Contratto API e Context)
+### Template
 
-### 3.1. Funzioni API
-Il codice interagisce esclusivamente tramite `api` e l'oggetto `context` costruito.
-| Funzione | Descrizione |
-| :--- | :--- |
-| `api.getBoard()` | Array di 9 elementi ('X', 'O', null). |
-| `api.getGameStatus()` | Stato: 'O', 'X', 'TIE' o null. |
-| `api.getAvailableMoves()`| Indici delle celle vuote (mosse legali). |
-| `api.makeMove(index)` | Esegue la mossa. OBBLIGATORIO negli `onEnter`. |
+```markdown
+## AUGMENT: Augmentation (Strategic Directives)
 
-## 4. HOW: Generazione (Contratto del Codice e Struttura)
+**CREATIVITY DIRECTIVE:**  
+The implementation MUST include logic beyond the basic requirements specified in WHAT.
 
-### 4.1. Regole di Sintassi
-* Output = singolo oggetto letterale ({ ... }).
-* Tutte le funzioni usano la sintassi `function(...) { ... }` (**no Arrow Functions $\Rightarrow$**).
-* Gli Helper sono chiamati con `fsmDefinition.nomeHelper()`.
+### Required Augmentations
 
-### 4.2. Scaffolding (Integrità Totale)
+#### 1. OPTIMIZATION
+
+**Directive:** [Specific optimization for this domain]
+
+Examples:
+
+- For data processing: Implement streaming to handle large datasets
+- For pathfinding: Add caching for previously computed paths
+- For API calls: Implement request deduplication and response caching
+- For algorithms: Use O(n log n) instead of O(n²) where applicable
+
+**Implementation requirement:** [Specific technique to implement]
+
+#### 2. RESILIENCE
+
+**Directive:** Implement comprehensive error handling and recovery.
+
+MANDATORY mechanisms:
+
+- **Retry Logic:** [Specify: exponential backoff, max attempts, conditions]
+- **Fallback Strategy:** [Specify: what to do when all retries fail]
+- **Timeout Handling:** [Specify: timeout duration, timeout behavior]
+- **Validation:** [Specify: input validation, output validation]
+
+**Implementation requirement:** [Specific error scenarios to handle]
+
+#### 3. INTELLIGENCE
+
+**Directive:** Add strategic decision-making beyond basic logic.
+
+Required intelligence:
+
+- **[Domain-Specific Heuristic]:** [Description and purpose]
+- **[Risk Assessment]:** [What risks to evaluate and how]
+- **[Adaptation]:** [How system should adapt to different conditions]
+
+**Implementation requirement:** [Specific helper function or logic to add]
+
+### Domain-Specific Augmentations
+
+[Add any domain-specific enhancements]
+
+Examples:
+
+- For game AI: Implement minimax with alpha-beta pruning
+- For network code: Add circuit breaker pattern
+- For state machines: Add deadlock detection and prevention
+- For data processing: Add memory-efficient chunking
+```
+
+### Population Rules
+
+**MANDATORY if AUGMENT is included:**
+
+- Specify at least 2 categories (optimization + resilience, or optimization + intelligence)
+- Provide concrete implementation requirements, not vague suggestions
+- Tie augmentations to the specific domain/task
+- Specify which helper functions or patterns to add
+
+**FORBIDDEN:**
+
+- Generic statements like "make it better"
+- Augmentations not relevant to the domain
+- Conflicting requirements (e.g., "optimize for speed" + "use defensive copying everywhere")
+
+---
+
+## ✅ Phase 6: VERIFY (Validation Checklist) [ALWAYS REQUIRED]
+
+> **Purpose:** Final validation checklist to ensure generated code meets all requirements.
+
+### Checklist Function
+
+**Note for LLMs:** This checklist influences the generation process by reinforcing critical constraints. It is NOT executed post-generation autonomously. The user will validate the output manually using this checklist.
+
+### Template
+
+```markdown
+## VERIFY: Verification
+
+Before providing the output, verify the code satisfies ALL requirements below:
+
+### ✅ Structural Compliance (WHAT Phase)
+
+- [ ] Output format matches WHAT specification exactly?
+- [ ] [Role-appropriate complexity level]?
+- [ ] All constraints from WHAT are satisfied?
+- [ ] Scaffolding is complete with no placeholders/TODOs?
+
+### ✅ Architectural Compliance (WHERE Phase - if applicable)
+
+- [ ] All states from WHERE are implemented?
+- [ ] Transitions follow the specified triggers?
+- [ ] Priority hierarchy is respected: [Priority 1] → [Priority 2] → [Priority 3]?
+- [ ] Execution cycle matches WHERE specification?
+- [ ] Context construction follows the contract?
+
+### ✅ Syntactic Compliance (HOW: Generation)
+
+- [ ] All MANDATORY syntax rules are followed?
+- [ ] All FORBIDDEN patterns are absent?
+- [ ] Naming conventions are consistent?
+- [ ] Scaffolding sections (A, B, C, D) are all populated?
+- [ ] Helper functions are accessible via [specified access pattern]?
+
+### ✅ Interface Compliance (HOW: Interface)
+
+- [ ] Code uses ONLY functions documented in Interface section?
+- [ ] No undocumented API calls appear in code?
+- [ ] Error handling is present for functions marked "Can fail"?
+- [ ] Context construction populates all required fields?
+
+### ✅ Augmentation Compliance (AUGMENT Phase - if applicable)
+
+- [ ] Optimization logic is implemented as specified?
+- [ ] Resilience mechanisms (retry/fallback/timeout) are present?
+- [ ] Intelligence/heuristics are added as required?
+- [ ] Domain-specific augmentations are included?
+
+### ✅ Domain-Specific Validation
+
+[Add any domain-specific checks]
+
+Examples:
+
+- [ ] For FSM: Terminal states have no outgoing transitions?
+- [ ] For game AI: Defense is prioritized over offense as specified?
+- [ ] For async code: All Promises are properly awaited?
+
+### Final Assertion
+
+- [ ] **The code can be executed immediately with no modifications?**
+```
+
+### Population Rules
+
+**MANDATORY:**
+
+- Include checks for ALL phases that were populated
+- Make checks specific and testable (not vague like "is it good?")
+- Use checkbox format for each check
+- Include domain-specific validation criteria
+- End with final assertion about executability
+
+**FORBIDDEN:**
+
+- Generic checks like "code quality is good"
+- Checks for phases that were not included
+- Ambiguous criteria that can't be objectively verified
+
+---
+
+## 📝 Complete Example: Email Validator
+
+### User Command
+
+```
+Apply 2WHAV [MINIMAL] to: Create an async email validator that calls an external API and retries 3 times with exponential backoff
+```
+
+### Generated Prompt (by LLM)
+
+````markdown
+## WHAT: Objective
+
+### Role and Task
+
+You are an expert in asynchronous JavaScript programming. Your task is to create a robust email validation function that interfaces with an external API and implements retry logic.
+
+### Expected Output
+
+The output MUST be a single async function named `validateEmail` with this exact signature:
+
 ```javascript
-// SALVA un riferimento all'oggetto per accedere alle helper
-const fsmDefinition = {
-  // ===== SEZIONE A: CONFIGURAZIONE (initialState, initialMemory, constants) =====
-  initialState: 'IDLE',
-
-  initialMemory: {
-    moveCount: 0
-  },
-
-  constants: {
-    PLAYER: 'O', OPPONENT: 'X', TIE: 'TIE',
-    WINNING_LINES: [
-      [0, 1, 2], [3, 4, 5], [6, 7, 8],
-      [0, 3, 6], [1, 4, 7], [2, 5, 8],
-      [0, 4, 8], [2, 4, 6]
-    ],
-  },
-
-  // ===== SEZIONE B: COSTRUZIONE CONTESTO (buildContext) =====
-  buildContext: function(api, memory, events, externalData) {
-    // Implementa la costruzione del contesto, inclusa la derivazione di context.isOurTurn
-    return {
-      board: api.getBoard(),
-      availableMoves: api.getAvailableMoves(),
-      gameStatus: api.getGameStatus(),
-      isOurTurn: externalData.isBotTurn,
-    };
-  },
-
-  // ===== SEZIONE C: HELPER FUNCTIONS (Logica Strategica) =====
-
-  // *** OBBLIGATORIO: Implementazione robusta e commentata ***
-  findWinningMove: function(board, player, availableMoves, constants) {
-    // Restituisce l'indice della mossa vincente (0-8) o null
-  },
-
-  // *** OBBLIGATORIO: Funzione Critica per la Sopravvivenza del Bot ***
-  findForkMove: function(board, player, availableMoves, constants) {
-    // Restituisce l'indice che crea o blocca una forchetta (doppia minaccia), altrimenti null.
-    // DEVI commentare la logica usata per la rilevazione della forchetta.
-  },
-
-  // ===== SEZIONE D: TRANSIZIONI DI EMERGENZA (Livello 1) - ORDINE RAFFORZATO (2.2) =====
-  emergencyTransitions: [
-    // 1. Termine Gioco (2.2.1)
-    { target: 'GAME_OVER', condition: function(api, memory, context, events) { return context.gameStatus !== null; } },
-
-    // 2. Blocco Vittoria Avversaria (2.2.2)
-    {
-      target: 'BLOCKING_MOVE',
-      condition: function(api, memory, context, events) {
-        return context.isOurTurn && fsmDefinition.findWinningMove(context.board, context.constants.OPPONENT, context.availableMoves, context.constants) !== null;
-      },
-      description: 'BLOCCO OBBLIGATORIO: Impedisce la vittoria immediata di X.'
-    },
-
-    // 3. Prevenzione Forchetta Avversaria (2.2.3)
-    {
-      target: 'BLOCKING_MOVE',
-      condition: function(api, memory, context, events) {
-        return context.isOurTurn && fsmDefinition.findForkMove(context.board, context.constants.OPPONENT, context.availableMoves, context.constants) !== null;
-      },
-      description: 'Previene la creazione di una forchetta (doppia minaccia) da parte di X.'
-    },
-
-    // 4. Vittoria Propria (2.2.4)
-    {
-      target: 'WINNING_MOVE',
-      condition: function(api, memory, context, events) {
-        return context.isOurTurn && fsmDefinition.findWinningMove(context.board, context.constants.PLAYER, context.availableMoves, context.constants) !== null;
-      },
-      description: 'Trova la mossa vincente immediata.'
-    }
-  ],
-
-  // ===== SEZIONE E: TRANSIZIONI TATTICHE (Livello 2) =====
-  tacticalTransitions: [
-    // 1. Creazione Forchetta Propria (2.2.5)
-    {
-      target: 'STRATEGIC_MOVE',
-      condition: function(api, memory, context, events) {
-        return context.isOurTurn && fsmDefinition.findForkMove(context.board, context.constants.PLAYER, context.availableMoves, context.constants) !== null;
-      },
-      description: 'Crea una forchetta (doppia minaccia).'
-    },
-    // 2. Mossa di Ripiego (2.2.6)
-    {
-      target: 'STRATEGIC_MOVE',
-      condition: function(api, memory, context, events) {
-        return context.isOurTurn;
-      },
-      description: 'Esegue la mossa strategica (Centro/Angoli/Lati).'
-    }
-  ],
-
-  // ===== SEZIONE F: STATI DELLA MACCHINA (onEnter/onExit/transitions) =====
-  states: {
-    IDLE: { /* ... */ },
-    WINNING_MOVE: { /* ... */ },
-
-    BLOCKING_MOVE: {
-      onEnter: function(api, memory, context) {
-        // La logica di esecuzione DEVE distinguere tra blocco immediato e blocco forchetta
-      },
-      transitions: [ /* ... */ ]
-    },
-
-    STRATEGIC_MOVE: {
-      onEnter: function(api, memory, context) {
-        // La logica di esecuzione DEVE dare priorità a: Centro > Forchetta Propria > Angoli Opposti > Angoli > Lati
-      },
-      transitions: [ /* ... */ ]
-    },
-
-    GAME_OVER: { /* ... */ }
-  }
-};
-
-
-5. HOW: Augmentation (Direttiva di Contribuzione Strategica e Intelligenza)
-
-- **DIRETTIVA CREATIVA POTENZIATA:** L'LLM deve agire come un giocatore esperto che conosce perfettamente la strategia del Tris. La logica DEVE garantire che il bot non sia battuto da alcuna sequenza ottimale dell'avversario.
-
-- **Priorità Strategica:** L'ordine di difesa e attacco nel codice rispecchia l'ordine del punto 2.2 (Difesa prioritaria).
-
-- **Robustezza di `findForkMove`:** La funzione `findForkMove` deve contenere logica non banale e commenti dettagliati in linea che spieghino i passaggi per identificare:
-
-  - La creazione di due minacce separate.
-
-  - La necessità di trovare una mossa che le chiuda entrambe.
-
-- **Intelligenza di `STRATEGIC_MOVE`:** Lo stato `STRATEGIC_MOVE: onEnter` deve gestire la complessità delle mosse di ripiego:
-
-  - Prima Mossa: Centro (4).
-
-  - Mossa di Ripiego: Sequenza Centro > Angoli Opposti > Angoli Vuoti > Lati.
-
-
-## 6. VERIFY: Verification (Autocontrollo Obbligatorio e Rigoroso)
-
-- **AUTOCONTROLLO FINALE:** L'LLM deve verificare che il codice generato rispetti tutti i seguenti punti:
-
-  - **Priorità Critica Inviolabile:** La sezione `emergencyTransitions` contiene le quattro transizioni nell'ordine: `GAME_OVER` `Blocco Vittoria Avv.` `Prevenzione Forchetta Avv.` `Vittoria Propria`.
-
-  - **Robustezza Funzionale:** La funzione `findForkMove` è implementata con logica complessa e include commenti esplicativi come richiesto nella Sezione 5.
-
-  - **Esecuzione Completa:** Tutte le sei sezioni A, B, C, D, E, F sono presenti. Gli stati esecutivi chiamano `api.makeMove()` e aggiornano `memory.moveCount`.
+async function validateEmail(email) { ... }
+```
 ````
+
+The function MUST return an object: `{ valid: boolean, attempts: number, error?: string }`
+
+### Operational Constraints
+
+- Priority: Reliability > Speed
+- Must handle network failures gracefully
+- Must respect retry limits exactly
+
+---
+
+## HOW: Generation
+
+### Mandatory Rules
+
+| Rule            | Requirement                     | ✅ Correct                            | ❌ Incorrect                             |
+| --------------- | ------------------------------- | ------------------------------------- | ---------------------------------------- |
+| Function Syntax | MANDATORY: async function       | `async function validateEmail(email)` | `const validateEmail = async (email) =>` |
+| Return Type     | MANDATORY: Object with 3 fields | `{ valid, attempts, error }`          | Just `true/false`                        |
+| Retry Logic     | MANDATORY: Exactly 3 attempts   | Loop with i < 3                       | Generic retry                            |
+
+### Scaffolding
+
+```javascript
+async function validateEmail(email) {
+  const delays = [100, 200, 400]; // Exponential backoff
+  let attempts = 0;
+
+  for (let i = 0; i < 3; i++) {
+    attempts++;
+    try {
+      // Call API
+      // Return on success
+    } catch (error) {
+      // Log failure
+      // Delay before retry (except last attempt)
+    }
+  }
+
+  // Return failure result
+}
+```
+
+---
+
+## HOW: Interface
+
+### Available Functions
+
+| Function                | Input    | Output             | Behavior                             | Notes                 |
+| ----------------------- | -------- | ------------------ | ------------------------------------ | --------------------- |
+| `api.checkEmail(email)` | `string` | `Promise<boolean>` | Validates email via external service | Can reject with Error |
+
+### API Contract
+
+- ✅ Function is asynchronous (returns Promise)
+- ✅ Rejects on network errors or invalid responses
+- ❌ NO other API functions available
+
+---
+
+## VERIFY: Verification
+
+- [ ] Function signature is exactly `async function validateEmail(email)`?
+- [ ] Uses exactly 3 attempts (loop i < 3)?
+- [ ] Exponential backoff delays: 100ms, 200ms, 400ms?
+- [ ] Returns object with `{ valid, attempts, error? }` structure?
+- [ ] Calls ONLY `api.checkEmail()` from Interface?
+- [ ] Handles API rejections with try/catch?
+
+```
+
+---
+
+## 🎓 Usage Examples
+
+### Example 1: Minimal Mode
+```
+
+Apply 2WHAV [MINIMAL] to: Create a CSV parser function
+
+```
+**Result:** Basic parser with WHAT + HOW + VERIFY
+
+---
+
+### Example 2: Standard Mode
+```
+
+Apply 2WHAV [STANDARD] to: Create a retry system with states IDLE, TRYING, SUCCESS, FAILED
+
+```
+**Result:** FSM with WHERE + state management
+
+---
+
+### Example 3: Full Mode
+```
+
+Apply 2WHAV [FULL] to: Create a production-ready rate limiter with sliding window algorithm
+
+```
+**Result:** Complete system with WHERE (FSM), AUGMENT (optimization + resilience), full validation
+
+---
+
+### Example 4: Custom Mode
+```
+
+Apply 2WHAV [WHAT + HOW + AUGMENT + VERIFY] to: Create an optimized string matcher (skip WHERE, already know it's linear)
+
+```
+**Result:** Optimized function without state machine overhead
+
+---
+
+## 🔗 Additional Resources
+
+### For Humans
+- 📖 **[Complete Guide](GUIDE.md)** - Deep dive into philosophy, theory, decision-making, and strategic use of 2WHAV
+- 💡 **Examples** - Production implementations with detailed analysis: [Traffic Light](examples/traffic-light.md), [Tic-Tac-Toe Bot](examples/tic-tac-toe.md)
+- 🌐 **[LLM-First Documentation Principles](https://github.com/fra00/llm-first-documentation)** - Foundation principles
+
+---
+
+## 📊 Information Density Check
+
+This README contains:
+- ✅ Complete phase templates (WHAT, WHERE, HOW, AUGMENT, VERIFY)
+- ✅ All mandatory/forbidden rules for each phase
+- ✅ Exact scaffolding patterns
+- ✅ Mode definitions and selection criteria
+- ✅ Population rules for every template
+- ✅ Execution protocol for LLMs
+- ✅ Complete example showing all phases
+- ✅ Cross-links to GUIDE.md for theory
+
+**Information preserved from original:** ~95%
+**Information moved to GUIDE.md:** Philosophy, "when to use" theory, modularity discussions
+**Information made more accessible:** Converted prose to tables, added templates, structured rules
+
+---
+
+## 📄 License
+
+MIT License - see [LICENSE](LICENSE) for details.
+
+---
+
+**Framework Version:** 1.0
+**Last Updated:** 2024
+**Maintained by:** [fra00](https://github.com/fra00)
+
+---
+
+*This README is written following LLM-First Documentation principles and designed as an executable "Tool as Prompt".*
+```
