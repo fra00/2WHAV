@@ -40,9 +40,9 @@
 
 **Examples:** FSM, workflow engine, retry logic, traffic controller
 
-### FULL (W+R+Wr+H+A+V)
+### FULL (W+R+Wr+H+A+V+E)
 
-**Phases:** WHAT + RESEARCH + WHERE + HOW + AUGMENT + VERIFY
+**Phases:** WHAT + RESEARCH + WHERE + HOW + AUGMENT + VERIFY + EVOLUTION
 
 **Use when:**
 
@@ -52,8 +52,11 @@
 - ✅ Strategic intelligence required
 - ✅ Latest best practices are critical
 - ✅ User explicitly requests "optimized" or "robust"
+- ✅ Prompt quality improvement through iteration is valuable
 
 **Examples:** Game AI, distributed system, rate limiter, decision agent, security system
+
+**Note:** EVOLUTION phase iteratively refines the complete 2WHAV prompt through LLM-based genetic operations, producing an optimized version of the baseline specification.
 
 ---
 
@@ -119,7 +122,8 @@ Include AUGMENT if TASK mentions:
   "where": "04-where-generator.md",    // Conditional
   "how": "05-how-generator.md",        // Always
   "augment": "06-augment-generator.md",// Conditional
-  "verify": "07-verify-generator.md"   // Always
+  "verify": "07-verify-generator.md",  // Always
+  "evolution": "08-evolution-generator.md" // FULL only (meta-process)
 }
 ```
 
@@ -157,7 +161,10 @@ Include AUGMENT if TASK mentions:
 - Has states (open, half-open, closed) → WHERE needed
 - "Production-ready" → AUGMENT needed
 - Complex logic → All phases required
-- Result: FULL (W+Wr+H+A+V)
+- "Production-ready" → EVOLUTION for optimization
+- Result: FULL (W+R+Wr+H+A+V+E)
+
+**Evolution Impact:** The baseline prompt undergoes 3-5 iterations of refinement, with mutations adding specific edge cases, sharpening constraints to measurable thresholds, and expanding API documentation. Final prompt is validated to be superior to baseline on multiple criteria.
 
 ---
 

@@ -149,17 +149,19 @@ cd 2WHAV
 
 ## 🎨 Mode Selection Guide
 
-| Mode         | When to Use                   | Example Tasks                                   |
-| ------------ | ----------------------------- | ----------------------------------------------- |
-| **MINIMAL**  | Simple functions, no state    | CSV parser, email validator, string formatter   |
-| **STANDARD** | Systems with states/decisions | FSM, retry logic, workflow engine               |
-| **FULL**     | Production systems            | Rate limiter, caching layer, distributed system |
+| Mode         | When to Use                   | Example Tasks                                   | Evolution             |
+| ------------ | ----------------------------- | ----------------------------------------------- | --------------------- |
+| **MINIMAL**  | Simple functions, no state    | CSV parser, email validator, string formatter   | No                    |
+| **STANDARD** | Systems with states/decisions | FSM, retry logic, workflow engine               | No                    |
+| **FULL**     | Production systems            | Rate limiter, caching layer, distributed system | Yes (3-5 generations) |
 
 **Not sure?** Use **STANDARD** as default, or let the LLM decide by omitting the mode:
 
 ```
 "Apply 2WHAV to: [YOUR TASK]"  # Defaults to FULL
 ```
+
+**NEW in v2.1:** FULL mode includes **evolutionary refinement** - the LLM iteratively improves the baseline prompt through 3-5 generations of mutations and crossover operations, enhancing specificity, completeness, and clarity.
 
 ---
 
@@ -271,13 +273,15 @@ The LLM will generate three separate structured prompts.
 
 The framework is designed for mid-range LLMs (32k+ context):
 
-| Mode         | Skills Loaded | Tokens Used | Free Space (32k) |
-| ------------ | ------------- | ----------- | ---------------- |
-| **MINIMAL**  | 4 files       | ~5,000      | 27k (84%)        |
-| **STANDARD** | 5 files       | ~7,000      | 25k (78%)        |
-| **FULL**     | 8 files       | ~10,500     | 21k (66%)        |
+| Mode         | Skills Loaded | Tokens Used | Free Space (32k) | Evolution |
+| ------------ | ------------- | ----------- | ---------------- | --------- |
+| **MINIMAL**  | 4 files       | ~5,000      | 27k (84%)        | No        |
+| **STANDARD** | 5 files       | ~7,000      | 25k (78%)        | No        |
+| **FULL**     | 9 files       | ~15,500     | 16.5k (52%)      | Yes       |
 
-**Key benefit:** Even FULL mode leaves 65%+ of context for your actual work.
+**Key benefit:** Even FULL mode with evolution leaves 50%+ of context for your actual work.
+
+**Evolution Cost:** The EVOLUTION phase uses ~5-12k additional tokens during execution for LLM calls (pairwise comparisons, mutations, validation), but this happens after framework loading and produces a refined prompt that generates better code.
 
 ---
 
@@ -322,6 +326,22 @@ The framework is designed for mid-range LLMs (32k+ context):
 - `## HOW: Interface` (API contract)
 - `## AUGMENT: Optimization` (FULL mode only)
 - `## VERIFY: Validation` (checklist)
+- `## EVOLUTION: Iterative Refinement` (FULL mode only - meta-process)
+
+### Q: How does the EVOLUTION phase work in FULL mode?
+
+**A:** EVOLUTION operates as a meta-process after all phases are assembled:
+
+1. **Baseline Generation:** Standard 2WHAV prompt created
+2. **Population Init:** LLM generates 4 variations through prompted mutations
+3. **Pairwise Evaluation:** LLM judges which prompts are better (no code execution needed)
+4. **Selection:** Top prompts survive based on tournament results
+5. **Genetic Operations:** LLM performs mutations (specificity enhancement, edge case addition) and crossover
+6. **Validation:** Constitutional check ensures 2WHAV structure preserved
+7. **Iteration:** Repeat for 3-5 generations or until convergence
+8. **Output:** Best evolved prompt replaces baseline
+
+**Key Feature:** Works for ANY task (code, design, analysis, documentation) because fitness is measured through LLM-as-a-Judge pairwise comparisons, not code execution.
 
 ---
 
@@ -340,9 +360,9 @@ You: "Apply 2WHAV [FULL] to: Production-ready API rate limiter using
      overload protection."
 
 LLM: [Loads skills: 00-controller, 01-mode-analyzer, 02-what, 03-research,
-     04-where, 05-how, 06-augment, 07-verify]
+     04-where, 05-how, 06-augment, 07-verify, 08-evolution]
 
-LLM: [Generates complete specification:]
+LLM: [Generates baseline specification:]
 
 ## WHAT: Objective
 
@@ -370,9 +390,21 @@ Your task is to create a production-ready rate limiter that:
 rate limiters...
 
 [Complete sections for WHERE, HOW, AUGMENT, VERIFY follow]
+
+## EVOLUTION: Iterative Refinement
+
+[LLM performs evolutionary refinement:]
+
+Generation 0 (Baseline): Initial prompt assembled
+Generation 1: Mutation adds specific Redis commands (ZADD, ZREMRANGEBYSCORE)
+Generation 2: Crossover merges timeout strategies, adds edge case for clock skew
+Generation 3: Mutation sharpens "10,000 req/sec" to "p99 latency < 5ms at 10k req/sec"
+Convergence: Best prompt wins on 4/5 criteria vs baseline
+
+[Final evolved prompt with enhanced specificity, completeness, and clarity]
 ```
 
-**Result:** You now have a complete, unambiguous specification to implement your rate limiter!
+**Result:** You now have an evolved, optimized specification that is more specific, complete, and executable than the baseline!
 
 ---
 
@@ -407,10 +439,10 @@ Want to extend 2WHAV for your domain?
 
 ---
 
-**Version:** 2.1
+**Version:** 2.1 (Evolutionary Enhancement)
 **Last Updated:** November 2025
 **Maintained by:** [fra00](https://github.com/fra00)
 
 ---
 
-_2WHAV: Making LLM specifications unambiguous, one prompt at a time._
+_2WHAV: Making LLM specifications unambiguous and evolved, one prompt at a time._

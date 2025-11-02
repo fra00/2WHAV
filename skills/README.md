@@ -6,18 +6,19 @@
 
 ## Skills Overview
 
-| Skill                  | File                       | Required    | Purpose                | Lines | Tokens |
-| ---------------------- | -------------------------- | ----------- | ---------------------- | ----- | ------ |
-| **Controller**         | `00-controller.md`         | Always      | Orchestrates workflow  | ~160  | ~1200  |
-| **Mode Analyzer**      | `01-mode-analyzer.md`      | Always      | Determines phases      | ~185  | ~1400  |
-| **WHAT Generator**     | `02-what-generator.md`     | Always      | Defines persona + task | ~330  | ~2500  |
-| **RESEARCH Generator** | `03-research-generator.md` | FULL only   | Knowledge expansion    | ~295  | ~2200  |
-| **WHERE Generator**    | `04-where-generator.md`    | Conditional | Defines architecture   | ~245  | ~1850  |
-| **HOW Generator**      | `05-how-generator.md`      | Always      | Defines syntax/API     | ~265  | ~2000  |
-| **AUGMENT Generator**  | `06-augment-generator.md`  | Optional    | Adds intelligence      | ~260  | ~1950  |
-| **VERIFY Generator**   | `07-verify-generator.md`   | Always      | Creates validation     | ~300  | ~2250  |
+| Skill                   | File                        | Required    | Purpose                | Lines | Tokens |
+| ----------------------- | --------------------------- | ----------- | ---------------------- | ----- | ------ |
+| **Controller**          | `00-controller.md`          | Always      | Orchestrates workflow  | ~170  | ~1250  |
+| **Mode Analyzer**       | `01-mode-analyzer.md`       | Always      | Determines phases      | ~195  | ~1450  |
+| **WHAT Generator**      | `02-what-generator.md`      | Always      | Defines persona + task | ~330  | ~2500  |
+| **RESEARCH Generator**  | `03-research-generator.md`  | FULL only   | Knowledge expansion    | ~295  | ~2200  |
+| **WHERE Generator**     | `04-where-generator.md`     | Conditional | Defines architecture   | ~245  | ~1850  |
+| **HOW Generator**       | `05-how-generator.md`       | Always      | Defines syntax/API     | ~265  | ~2000  |
+| **AUGMENT Generator**   | `06-augment-generator.md`   | FULL only   | Adds intelligence      | ~260  | ~1950  |
+| **VERIFY Generator**    | `07-verify-generator.md`    | Always      | Creates validation     | ~300  | ~2250  |
+| **EVOLUTION Generator** | `08-evolution-generator.md` | FULL only   | Iterative refinement   | ~330  | ~2500  |
 
-**Total Framework:** ~1,775 lines / ~13.35k tokens
+**Total Framework:** ~2,390 lines / ~17.95k tokens
 
 ---
 
@@ -51,9 +52,11 @@ Combine all generated phases into complete 2WHAV prompt.
 | ------------ | ------------- | ------------- | ------------------ | ------------------ |
 | **MINIMAL**  | 4 skills      | ~5,000        | ~16%               | ~8%                |
 | **STANDARD** | 5 skills      | ~7,000        | ~22%               | ~11%               |
-| **FULL**     | 8 skills      | ~10,500       | ~33%               | ~16%               |
+| **FULL**     | 9 skills      | ~15,500       | ~48%               | ~24%               |
 
-**Result:** Even on 32k context models, FULL mode leaves 21k+ tokens for work.
+**Result:** Even on 32k context models, FULL mode leaves 16.5k+ tokens for work.
+
+**Note:** FULL mode includes EVOLUTION which operates as a meta-process, refining the complete prompt through 3-5 generations of LLM-based genetic operations.
 
 ---
 
@@ -63,9 +66,10 @@ Combine all generated phases into complete 2WHAV prompt.
 graph TD
     A["00-controller"] --> B["01-mode-analyzer"]
     B --> C{"Mode Decision"}
-    C -->|MINIMAL| D["02, 04, 06"]
-    C -->|STANDARD| E["02, 03, 04, 06"]
-    C -->|FULL| F["02, 03, 04, 05, 06"]
+    C -->|MINIMAL| D["02, 05, 07"]
+    C -->|STANDARD| E["02, 04, 05, 07"]
+    C -->|FULL| F["02, 03, 04, 05, 06, 07, 08"]
+    F --> G["Evolution Meta-Process"]
 ```
 
 ---

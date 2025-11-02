@@ -90,6 +90,7 @@ function getPhasesForMode(mode) {
       '05-how',
       '06-augment',
       '07-verify',
+      '08-evolution',  // Iterative refinement meta-process
     ],
   };
   return phases[mode] || phases.FULL;
@@ -104,13 +105,15 @@ function getPhasesForMode(mode) {
 
 - MINIMAL: 3 skills (~3k tokens)
 - STANDARD: 4 skills (~4k tokens)
-- FULL: 6 skills (~6.5k tokens)
+- FULL: 7 skills (~9k tokens including evolution)
 
 **Never load:**
 
 - Skills not required by MODE
 - Example sections unless needed
 - Redundant documentation
+
+**Note:** FULL mode includes evolution which operates as a meta-process after initial prompt assembly.
 
 ---
 
@@ -142,6 +145,26 @@ Apply 2WHAV [STANDARD] to: Create traffic light FSM
 5. Return: Complete specification
 
 **Output:** Complete 2WHAV prompt with 4 phases, ready for code generation.
+
+---
+
+**Example (FULL Mode with Evolution):**
+
+**Input:**
+```
+Apply 2WHAV [FULL] to: Create production-ready rate limiter
+```
+
+**Controller Actions:**
+
+1. Parse: MODE=FULL, TASK="rate limiter"
+2. Load: All phases including evolution
+3. Generate: WHAT, RESEARCH, WHERE, HOW, AUGMENT, VERIFY
+4. Assemble: Baseline prompt
+5. **EVOLVE:** Run 3-5 generations of iterative refinement
+6. Return: Evolved, optimized specification
+
+**Output:** Evolved 2WHAV prompt with enhanced specificity, completeness, and clarity.
 
 ---
 

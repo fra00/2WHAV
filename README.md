@@ -59,13 +59,15 @@ Skills are available in `.claude/skills/` for native integration with proactive 
 
 ## 📋 Modes
 
-| Mode         | Phases                                    | Use Case                         | Token Cost |
-| ------------ | ----------------------------------------- | -------------------------------- | ---------- |
-| **MINIMAL**  | WHAT + HOW + VERIFY                       | Simple functions, utilities      | ~2k        |
-| **STANDARD** | WHAT + WHERE + HOW + VERIFY               | State machines, workflows        | ~3.5k      |
-| **FULL**     | WHAT + RESEARCH + WHERE + HOW + AUG + VER | Complex systems, production code | ~6k        |
+| Mode         | Phases                                           | Use Case                         | Token Cost |
+| ------------ | ------------------------------------------------ | -------------------------------- | ---------- |
+| **MINIMAL**  | WHAT + HOW + VERIFY                              | Simple functions, utilities      | ~2k        |
+| **STANDARD** | WHAT + WHERE + HOW + VERIFY                      | State machines, workflows        | ~3.5k      |
+| **FULL**     | WHAT + RESEARCH + WHERE + HOW + AUG + VER + EVOL | Complex systems, production code | ~6k        |
 
 **Default:** FULL (if mode not specified)
+
+**NEW in v2.1:** FULL mode includes **EVOLUTION** - iterative prompt refinement through LLM-based genetic operations that optimizes the baseline specification for improved specificity, completeness, and clarity.
 
 ---
 
@@ -76,15 +78,19 @@ graph LR
     A["User Task"] --> B["Mode Analyzer"]
     B --> C["Phase Skills"]
     C --> D["WHAT"]
-    C --> E["WHERE"]
-    C --> F["HOW"]
-    C --> G["AUGMENT"]
-    C --> H["VERIFY"]
-    D --> I["Assembled Prompt"]
-    E --> I
-    F --> I
-    G --> I
-    H --> I
+    C --> E["RESEARCH"]
+    C --> F["WHERE"]
+    C --> G["HOW"]
+    C --> H["AUGMENT"]
+    C --> I["VERIFY"]
+    D --> J["Assembled Prompt"]
+    E --> J
+    F --> J
+    G --> J
+    H --> J
+    I --> J
+    J --> K["EVOLUTION (FULL only)"]
+    K --> L["Optimized Prompt"]
 ```
 
 ### Skills Directory
@@ -94,10 +100,12 @@ skills/
 ├── 00-controller.md         # Orchestrates workflow
 ├── 01-mode-analyzer.md      # Determines required phases
 ├── 02-what-generator.md     # Defines objectives
-├── 03-where-generator.md    # Defines control flow
-├── 04-how-generator.md      # Defines syntax & API
-├── 05-augment-generator.md  # Adds intelligence
-└── 06-verify-generator.md   # Creates validation
+├── 03-research-generator.md # Knowledge expansion (FULL)
+├── 04-where-generator.md    # Defines control flow
+├── 05-how-generator.md      # Defines syntax & API
+├── 06-augment-generator.md  # Adds intelligence (FULL)
+├── 07-verify-generator.md   # Creates validation
+└── 08-evolution-generator.md # Iterative refinement (FULL)
 ```
 
 Each skill is **self-contained** and **independently readable**.
@@ -118,11 +126,13 @@ Apply 2WHAV [MINIMAL] to: Create a CSV parser
 Apply 2WHAV [STANDARD] to: Traffic light FSM with emergency override
 ```
 
-### Example 3: Production System
+### Example 3: Production System (with Evolution)
 
 ```
 Apply 2WHAV [FULL] to: Rate limiter with sliding window and circuit breaker
 ```
+
+**Result:** Complete specification with all phases + 3-5 iterations of evolutionary refinement that enhances specificity (exact thresholds), completeness (edge cases), and clarity (measurable constraints).
 
 ---
 
@@ -133,25 +143,30 @@ Apply 2WHAV [FULL] to: Rate limiter with sliding window and circuit breaker
 ```
 WHAT (Objective)
   ↓
+RESEARCH (Knowledge Expansion)  [FULL only]
+  ↓
 WHERE (Control Architecture)  [if needed]
   ↓
 HOW (Syntax + API)
   ↓
-AUGMENT (Intelligence)  [if needed]
+AUGMENT (Intelligence)  [FULL only]
   ↓
 VERIFY (Validation)
+  ↓
+EVOLUTION (Iterative Refinement)  [FULL only]
 ```
 
 ### Phase Descriptions
 
-| Phase        | Required    | Purpose                                             | Output               |
-| ------------ | ----------- | --------------------------------------------------- | -------------------- |
-| **WHAT**     | Always      | Define persona, role, task, output, constraints     | Objective statement  |
-| **RESEARCH** | FULL only   | Expand knowledge, latest practices, pitfalls        | Research directives  |
-| **WHERE**    | Conditional | Define FSM/states/priorities for decisional systems | Control architecture |
-| **HOW**      | Always      | Define syntax rules, API contract, scaffolding      | Code template        |
-| **AUGMENT**  | Optional    | Add optimization, resilience, intelligence          | Strategic directives |
-| **VERIFY**   | Always      | Create validation checklist                         | Quality criteria     |
+| Phase          | Required    | Purpose                                             | Output                    |
+| -------------- | ----------- | --------------------------------------------------- | ------------------------- |
+| **WHAT**       | Always      | Define persona, role, task, output, constraints     | Objective statement       |
+| **RESEARCH**   | FULL only   | Expand knowledge, latest practices, pitfalls        | Research directives       |
+| **WHERE**      | Conditional | Define FSM/states/priorities for decisional systems | Control architecture      |
+| **HOW**        | Always      | Define syntax rules, API contract, scaffolding      | Code template             |
+| **AUGMENT**    | FULL only   | Add optimization, resilience, intelligence          | Strategic directives      |
+| **VERIFY**     | Always      | Create validation checklist                         | Quality criteria          |
+| **EVOLUTION**  | FULL only   | Iteratively refine prompt through LLM-based genetic operations | Optimized specification |
 
 ---
 
@@ -214,18 +229,20 @@ Provide **copy-pasteable templates** with all sections defined.
 
 ## 📏 Token Efficiency
 
-**Framework size:** ~10.5k tokens (optimized for mid-range LLMs)
+**Framework size:** ~15.5k tokens (optimized for mid-range LLMs)
 
-- README: ~220 lines (~1.6k tokens)
-- Each skill: ~150-270 lines (~1-2k tokens each)
-- **Total:** Leaves 21k+ tokens free even on 32k context models
+- README: ~270 lines (~2k tokens)
+- Each skill: ~150-330 lines (~1-2.5k tokens each)
+- **Total:** Leaves 16.5k+ tokens free even on 32k context models
 
 **Smart loading:**
 
 - Only read skills needed for selected mode
 - MINIMAL mode: 4 skills (~5k tokens)
 - STANDARD mode: 5 skills (~7k tokens)
-- FULL mode: 8 skills (~10.5k tokens)
+- FULL mode: 9 skills (~15.5k tokens including evolution)
+
+**Note:** FULL mode's EVOLUTION phase operates as a meta-process that refines the complete prompt through 3-5 generations, improving quality without requiring additional skill files during evolution.
 
 ---
 
@@ -255,10 +272,10 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-**Version:** 2.0
+**Version:** 2.1 (Evolutionary Enhancement)
 **Last Updated:** November 2025
 **Maintained by:** [fra00](https://github.com/fra00)
 
 ---
 
-_2WHAV: Where specifications become contracts._
+_2WHAV: Where specifications evolve into contracts._
