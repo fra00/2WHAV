@@ -170,16 +170,20 @@ cd 2WHAV
 ### Basic Syntax
 
 **Standard FULL mode (with default evolution):**
+
 ```
 Apply 2WHAV [FULL] to: [YOUR TASK]
 ```
+
 - Uses default 3-5 generations
 - Automatic convergence detection
 
 **Explicit evolution control:**
+
 ```
 Apply 2WHAV [EVOLVE:N] to: [YOUR TASK]
 ```
+
 - `N` = number of generations (e.g., `EVOLVE:3`, `EVOLVE:5`, `EVOLVE:10`)
 - Equivalent to `[FULL]` mode with controlled iteration count
 
@@ -192,7 +196,7 @@ graph TD
     C --> D["Generation 0: Baseline"]
     D --> E["Initialize Population (5 variants)"]
     E --> F["Generation 1"]
-    
+
     F --> G{"Pairwise Evaluation"}
     G --> H["Tournament Selection"]
     H --> I["Elite Selection (Top 1)"]
@@ -207,50 +211,50 @@ graph TD
     O -->|Pass| P["New Population"]
     O -->|Fail| Q["Reject & Regenerate"]
     Q --> J
-    
+
     P --> R["Generation 2-N"]
     R --> S{"Convergence?"}
     S -->|No| G
     S -->|Yes| T["Return Best Evolved Prompt"]
-    
-    style A fill:#e1f5ff
-    style T fill:#d4edda
-    style O fill:#fff3cd
-    style Q fill:#f8d7da
 ```
 
 ### Evolution Parameters
 
-| Parameter | Syntax | Description | Example |
-|-----------|--------|-------------|---------|
-| **Default** | `[FULL]` | Automatic (3-5 generations) | `Apply 2WHAV [FULL] to: Rate limiter` |
-| **Explicit** | `[EVOLVE:N]` | Exactly N generations | `Apply 2WHAV [EVOLVE:5] to: Rate limiter` |
-| **Light** | `[EVOLVE:3]` | Quick refinement (3 gen) | For faster iteration |
-| **Standard** | `[EVOLVE:5]` | Balanced optimization | Recommended default |
-| **Deep** | `[EVOLVE:10]` | Thorough exploration | For complex systems |
+| Parameter    | Syntax        | Description                 | Example                                   |
+| ------------ | ------------- | --------------------------- | ----------------------------------------- |
+| **Default**  | `[FULL]`      | Automatic (3-5 generations) | `Apply 2WHAV [FULL] to: Rate limiter`     |
+| **Explicit** | `[EVOLVE:N]`  | Exactly N generations       | `Apply 2WHAV [EVOLVE:5] to: Rate limiter` |
+| **Light**    | `[EVOLVE:3]`  | Quick refinement (3 gen)    | For faster iteration                      |
+| **Standard** | `[EVOLVE:5]`  | Balanced optimization       | Recommended default                       |
+| **Deep**     | `[EVOLVE:10]` | Thorough exploration        | For complex systems                       |
 
 ### How Evolution Works
 
 **Step-by-Step Process:**
 
 1. **Baseline Generation** (Generation 0)
+
    - Standard 2WHAV phases assembled
    - Forms the starting point for evolution
 
 2. **Population Initialization**
+
    - LLM generates 4 variations through mutations
    - Each targets different improvements
 
 3. **Pairwise Tournament**
+
    - LLM judges: "Which prompt is better: A or B?"
    - Criteria: Specificity, Completeness, Clarity, Executability
    - Ranks all variants by win rate
 
 4. **Selection**
+
    - Elite: Top 1 always survives
    - Parents: Top 2-3 selected for breeding
 
 5. **Genetic Operations** (LLM-Prompted)
+
    - **Mutation Types:**
      - "Make this constraint more measurable"
      - "Add a missing edge case to VERIFY"
@@ -259,11 +263,13 @@ graph TD
      - "Merge the best aspects of these two prompts"
 
 6. **Constitutional Validation**
+
    - LLM checks: "Does this preserve 2WHAV structure?"
    - Rejects mutations that violate constraints
    - Ensures WHAT/WHERE/HOW/AUGMENT/VERIFY remain intact
 
 7. **Convergence Check**
+
    - Stop if best prompt wins on 4/5 criteria vs baseline
    - Stop if reached generation limit
    - Stop if no improvement for 2 generations
@@ -274,43 +280,49 @@ graph TD
 ### Usage Examples
 
 **Example 1: Quick Refinement**
+
 ```
 Apply 2WHAV [EVOLVE:3] to: CSV parser with error handling
 ```
+
 - 3 generations of mutations
 - Fast iteration for simpler tasks
 
 **Example 2: Standard Production**
+
 ```
 Apply 2WHAV [EVOLVE:5] to: Production-ready rate limiter with Redis
 ```
+
 - 5 generations (recommended)
 - Balances quality vs. time
 
 **Example 3: Deep Optimization**
+
 ```
 Apply 2WHAV [EVOLVE:10] to: Distributed consensus algorithm with Byzantine fault tolerance
 ```
+
 - 10 generations for complex systems
 - Maximum exploration of prompt space
 
 ### Evolution vs. Standard Modes
 
-| Mode | Syntax | Evolution | Generations | Use Case |
-|------|--------|-----------|-------------|----------|
-| **MINIMAL** | `[MINIMAL]` | No | 0 | Simple functions |
-| **STANDARD** | `[STANDARD]` | No | 0 | State machines |
-| **FULL** | `[FULL]` | Yes (auto) | 3-5 | Production systems |
-| **EVOLVE:N** | `[EVOLVE:3/5/10]` | Yes (explicit) | N | Controlled evolution |
+| Mode         | Syntax            | Evolution      | Generations | Use Case             |
+| ------------ | ----------------- | -------------- | ----------- | -------------------- |
+| **MINIMAL**  | `[MINIMAL]`       | No             | 0           | Simple functions     |
+| **STANDARD** | `[STANDARD]`      | No             | 0           | State machines       |
+| **FULL**     | `[FULL]`          | Yes (auto)     | 3-5         | Production systems   |
+| **EVOLVE:N** | `[EVOLVE:3/5/10]` | Yes (explicit) | N           | Controlled evolution |
 
 ### Token Cost Estimation
 
-| Configuration | Framework Load | Evolution Execution | Total | Result Quality |
-|---------------|----------------|---------------------|-------|----------------|
-| `[FULL]` default | ~15.5k tokens | ~5-12k tokens | ~20-27k | High |
-| `[EVOLVE:3]` | ~15.5k tokens | ~5-8k tokens | ~20-23k | Good |
-| `[EVOLVE:5]` | ~15.5k tokens | ~8-12k tokens | ~23-27k | Very High |
-| `[EVOLVE:10]` | ~15.5k tokens | ~15-25k tokens | ~30-40k | Maximum |
+| Configuration    | Framework Load | Evolution Execution | Total   | Result Quality |
+| ---------------- | -------------- | ------------------- | ------- | -------------- |
+| `[FULL]` default | ~15.5k tokens  | ~5-12k tokens       | ~20-27k | High           |
+| `[EVOLVE:3]`     | ~15.5k tokens  | ~5-8k tokens        | ~20-23k | Good           |
+| `[EVOLVE:5]`     | ~15.5k tokens  | ~8-12k tokens       | ~23-27k | Very High      |
+| `[EVOLVE:10]`    | ~15.5k tokens  | ~15-25k tokens      | ~30-40k | Maximum        |
 
 **Note:** Evolution costs are during execution (LLM calls for evaluation/mutation), not framework loading.
 
