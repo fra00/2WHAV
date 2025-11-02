@@ -30,8 +30,13 @@ graph TD
 ### Required
 
 - **Command Format:** `Apply 2WHAV [MODE] to: [TASK]`
-- **MODE:** MINIMAL | STANDARD | FULL | Custom
+- **MODE:** MINIMAL | STANDARD | FULL | EVOLVE:N | Custom
 - **TASK:** User's requirement description
+
+**Evolution Syntax:**
+- `[FULL]` - Uses default 3-5 generations with auto-convergence
+- `[EVOLVE:N]` - Explicit control: exactly N generations (e.g., `EVOLVE:3`, `EVOLVE:5`, `EVOLVE:10`)
+- Both are equivalent to FULL mode with evolutionary refinement
 
 ### Optional
 
@@ -165,6 +170,26 @@ Apply 2WHAV [FULL] to: Create production-ready rate limiter
 6. Return: Evolved, optimized specification
 
 **Output:** Evolved 2WHAV prompt with enhanced specificity, completeness, and clarity.
+
+---
+
+**Example (Explicit Evolution Control):**
+
+**Input:**
+```
+Apply 2WHAV [EVOLVE:5] to: Create production-ready rate limiter
+```
+
+**Controller Actions:**
+
+1. Parse: MODE=EVOLVE:5, TASK="rate limiter"
+2. Treat as FULL mode with exactly 5 generations
+3. Generate: WHAT, RESEARCH, WHERE, HOW, AUGMENT, VERIFY
+4. Assemble: Baseline prompt
+5. **EVOLVE:** Run exactly 5 generations (no early convergence)
+6. Return: Evolved, optimized specification
+
+**Output:** Evolved prompt after precisely 5 generations of refinement.
 
 ---
 
