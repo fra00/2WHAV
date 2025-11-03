@@ -19,13 +19,13 @@ Based on the analysis, select your operational framework:
 - **IF `tool_access` IS `true`**:
 
   - **Your framework is `AGENT_MODE`.**
-  - You **MUST** read the file `llm-agent.md` in its entirety.
-  - The contents of `llm-agent.md` define your core instruction set for all subsequent tasks in this session. Internalize it as your primary operational process.
+  - You **MUST** read the file [`llm-agent.md`](llm-agent.md) in its entirety.
+  - The contents of [`llm-agent.md`](llm-agent.md) define your core instruction set for all subsequent tasks in this session. Internalize it as your primary operational process.
 
 - **ELSE (`tool_access` IS `false`)**:
   - **Your framework is `PURE_MODE`.**
-  - You **MUST** read the file `llm-pure.md` in its entirety.
-  - The contents of `llm-pure.md` define your core instruction set for all subsequent tasks in this session. Internalize it as your primary operational process.
+  - You **MUST** read the file [`llm-pure.md`](llm-pure.md) in its entirety.
+  - The contents of [llm-pure.md](llm-pure.md) define your core instruction set for all subsequent tasks in this session. Internalize it as your primary operational process.
 
 ---
 
