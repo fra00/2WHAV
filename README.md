@@ -24,8 +24,8 @@ Based on the analysis, select your operational framework:
 
 - **ELSE (`tool_access` IS `false`)**:
   - **Your framework is `PURE_MODE`.**
-  - You **MUST** read the file [`llm-pure.md`](https://github.com/fra00/2WHAV/blob/iterative/llm-pure.md) in its entirety.
-  - The contents of [llm-pure.md](https://github.com/fra00/2WHAV/blob/iterative/llm-pure.md) define your core instruction set for all subsequent tasks in this session. Internalize it as your primary operational process.
+  - You **MUST** read the file [`llm-pure.md`](https://raw.githubusercontent.com/fra00/2WHAV/refs/heads/iterative/llm-pure.md) in its entirety.
+  - The contents of [llm-pure.md](https://raw.githubusercontent.com/fra00/2WHAV/refs/heads/iterative/llm-pure.md) define your core instruction set for all subsequent tasks in this session. Internalize it as your primary operational process.
 
 ---
 
