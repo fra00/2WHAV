@@ -8,6 +8,8 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
+cellular-automata-simulator/node_modules
+pixel-art-editor/node_modules
 dist
 dist-ssr
 *.local
@@ -17,7 +19,8 @@ dist-ssr
 !.vscode/extensions.json
 .idea
 .DS_Store
-
-# Vite
-.vite
-coverage
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?

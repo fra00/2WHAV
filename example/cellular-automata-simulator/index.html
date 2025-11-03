@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cellular Automata Simulator</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div id="app">
+        <aside class="controls">
+            <h1>Cellular Automata</h1>
+
+            <section class="grid-settings">
+                <h2>Grid Settings</h2>
+                <label for="grid-size">Grid Size:</label>
+                <select id="grid-size">
+                    <option value="50">50x50</option>
+                    <option value="100">100x100</option>
+                    <option value="200" selected>200x200</option>
+                    <option value="300">300x300</option>
+                    <option value="500">500x500</option>
+                </select>
+            </section>
+
+            <section class="simulation-controls">
+                <h2>Simulation</h2>
+                <button id="play-pause">Play</button>
+                <button id="step">Step</button>
+                <label for="speed">Speed (steps/sec):</label>
+                <input type="range" id="speed" min="1" max="60" value="10">
+                <span id="speed-value">10</span>
+                <button id="clear">Clear</button>
+                <button id="random-fill">Random Fill</button>
+            </section>
+
+            <section class="rule-editor">
+                <h2>Custom Rule Editor</h2>
+                <label for="rule-input">Rule (B/S format):</label>
+                <input type="text" id="rule-input" value="B3/S23">
+                <div id="rule-preview"></div>
+            </section>
+
+            <section class="preset-patterns">
+                <h2>Preset Patterns</h2>
+                <select id="preset-patterns-select">
+                    <option value="">Select a pattern</option>
+                    <option value="glider">Glider</option>
+                    <option value="lwss">Lightweight Spaceship</option>
+                    <option value="gosper">Gosper Glider Gun</option>
+                </select>
+                <button id="load-pattern">Load Pattern</button>
+            </section>
+
+            <section class="drawing-tools">
+                <h2>Drawing Tools</h2>
+                <button id="pencil-tool" class="active">Pencil</button>
+                <button id="drag-tool">Drag</button>
+            </section>
+        </aside>
+        <main class="simulator-view">
+            <canvas id="game-canvas"></canvas>
+        </main>
+    </div>
+
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Procedural Terrain Generator</title>
+    <style>
+        body { margin: 0; background-color: #111; }
+        canvas { display: block; }
+        .dg.main .close-button { background-color: #333; }
+        #loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-family: monospace;
+            font-size: 1.5em;
+            padding: 20px;
+            background: rgba(0,0,0,0.7);
+            border-radius: 10px;
+            display: none; /* Hidden by default */
+        }
+    </style>
+</head>
+<body>
+    <div id="loader">Generating Terrain...</div>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.164.1/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.164.1/examples/jsm/"
+        }
+    }
+    </script>
+    <script type="module">
+        // ===== IMPORTS =====
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { GUI } from 'https://unpkg.com/dat.gui@0.7.9/build/dat.gui.module.js';
+
+        let scene, camera, renderer, controls, terrainMesh;
+        let terrainWorker = null;
+
+        const loaderElement = document.getElementById('loader');
+
+        // ===== 2. TERRAIN GENERATION & PARAMETERS =====
+        const terrainParams = {
+            width: 200,
+            height: 200,
+            segments: 150,
+            noiseScale: 35.0,
+            terrainHeight: 20.0,
+            octaves: 4,
+            persistence: 0.5,
+            lacunarity: 2.0,
+            wireframe: false,
+        };
+
+        function generateTerrain() {
+            loaderElement.style.display = 'block'; // Show loader
+
+            // Terminate existing worker if it's running
+            if (terrainWorker) {
+                terrainWorker.terminate();
+            }
+
+            terrainWorker = new Worker('./terrain-worker.js', { type: 'module' });
+
+            terrainWorker.onmessage = function(e) {
+                const { vertices } = e.data;
+
+                if (terrainMesh) {
+                    scene.remove(terrainMesh);
+                    terrainMesh.geometry.dispose();
+                    terrainMesh.material.dispose();
+                }
+
+                const geometry = new THREE.PlaneGeometry(
+                    terrainParams.width,
+                    terrainParams.height,
+                    terrainParams.segments,
+                    terrainParams.segments
+                );
+                
+                geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3));
+                geometry.computeVertexNormals();
+
+                const material = new THREE.MeshStandardMaterial({
+                    color: 0xcccccc,
+                    wireframe: terrainParams.wireframe,
+                    side: THREE.DoubleSide,
+                });
+
+                terrainMesh = new THREE.Mesh(geometry, material);
+                terrainMesh.rotation.x = -Math.PI / 2;
+                scene.add(terrainMesh);
+
+                loaderElement.style.display = 'none'; // Hide loader
+                terrainWorker.terminate(); // Clean up the worker
+                terrainWorker = null;
+            };
+            
+            terrainWorker.onerror = function(error) {
+                console.error("Worker Error:", error);
+                loaderElement.textContent = "Error generating terrain.";
+            };
+
+            // Start the worker
+            terrainWorker.postMessage(terrainParams);
+        }
+
+        // ===== 1. SETUP =====
+        function init() {
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            camera.position.set(50, 60, 50);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+            scene.add(ambientLight);
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(50, 100, 20);
+            scene.add(directionalLight);
+
+            controls = new OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+
+            generateTerrain();
+            setupGUI();
+            animate();
+
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        // ===== 3. UI (DAT.GUI) =====
+        function setupGUI() {
+            const gui = new GUI();
+            const terrainFolder = gui.addFolder('Terrain Parameters');
+            terrainFolder.add(terrainParams, 'noiseScale', 1, 100).name('Noise Scale');
+            terrainFolder.add(terrainParams, 'terrainHeight', 1, 100).name('Max Height');
+            terrainFolder.add(terrainParams, 'octaves', 1, 8).step(1).name('Octaves');
+            terrainFolder.add(terrainParams, 'persistence', 0.1, 1.0).name('Persistence');
+            terrainFolder.add(terrainParams, 'lacunarity', 1.0, 4.0).name('Lacunarity');
+            terrainFolder.add(terrainParams, 'wireframe').name('Wireframe').onChange(() => {
+                if (terrainMesh) {
+                    terrainMesh.material.wireframe = terrainParams.wireframe;
+                }
+            });
+            
+            gui.add({ regenerate: generateTerrain }, 'regenerate').name("Regenerate");
+            terrainFolder.open();
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        // ===== 4. RENDER LOOP =====
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        // ===== INITIALIZATION =====
+        init();
+    </script>
+</body>
+</html>

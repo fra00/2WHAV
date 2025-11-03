@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixel Art Editor</title>
+    <style>
+        :root {
+            --background-color: #2c2c2c;
+            --container-bg: #3a3a3a;
+            --tool-bg: #4a4a4a;
+            --tool-hover-bg: #5a5a5a;
+            --text-color: #f0f0f0;
+            --border-color: #555;
+            --accent-color: #007bff;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 20px;
+        }
+        .main-container {
+            display: flex;
+            gap: 20px;
+        }
+        #canvas-container {
+            border: 2px solid var(--border-color);
+            background-color: #fff; /* Checkerboard will be drawn here */
+        }
+        #main-canvas {
+            width: 640px;
+            height: 640px;
+            image-rendering: pixelated;
+            cursor: crosshair;
+        }
+        .tools-panel, .layers-panel, .color-panel {
+            background-color: var(--container-bg);
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            min-width: 200px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        h3 {
+            margin: 0 0 10px 0;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 5px;
+        }
+        .tool-button, .layer-button, .history-button {
+            background-color: var(--tool-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            transition: background-color 0.2s;
+        }
+        .tool-button:hover, .layer-button:hover, .history-button:hover {
+            background-color: var(--tool-hover-bg);
+        }
+        .tool-button.active {
+            background-color: var(--accent-color);
+            border-color: var(--accent-color);
+        }
+        #layers-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .layer-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            background-color: var(--tool-bg);
+            border-radius: 4px;
+            cursor: grab;
+        }
+        .layer-item.active {
+            background-color: var(--accent-color);
+        }
+        .layer-placeholder {
+            background-color: var(--tool-hover-bg);
+            border: 2px dashed var(--accent-color);
+            height: 30px;
+        }
+        .layer-item span {
+            flex-grow: 1;
+        }
+        .color-picker-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        #color-picker {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            width: 100px;
+            height: 100px;
+            border: none;
+            cursor: pointer;
+            background-color: transparent;
+            padding: 0;
+        }
+        #color-picker::-webkit-color-swatch {
+            border-radius: 50%;
+            border: 2px solid var(--border-color);
+        }
+        #color-picker::-moz-color-swatch {
+            border-radius: 50%;
+            border: 2px solid var(--border-color);
+        }
+        #export-btn {
+            background-color: #28a745;
+            border: none;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="tools-panel">
+        <h3>Tools</h3>
+        <button class="tool-button active" data-tool="pencil">Pencil</button>
+        <button class="tool-button" data-tool="eraser">Eraser</button>
+        <button class="tool-button" data-tool="fill">Fill Bucket</button>
+        <button class="tool-button" data-tool="eyedropper">Eyedropper</button>
+        <h3>History</h3>
+        <button class="history-button" id="undo-btn">Undo</button>
+        <button class="history-button" id="redo-btn">Redo</button>
+        <h3>Export</h3>
+        <button id="export-btn">Export to PNG</button>
+    </div>
+
+    <div id="canvas-container">
+        <canvas id="main-canvas" width="640" height="640"></canvas>
+    </div>
+
+    <div class="right-panel">
+        <div class="color-panel">
+            <h3>Color</h3>
+            <div class="color-picker-wrapper">
+                <input type="color" id="color-picker" value="#ff0000">
+            </div>
+        </div>
+        <div class="layers-panel">
+            <h3>Layers</h3>
+            <ul id="layers-list"></ul>
+            <button class="layer-button" id="add-layer-btn">Add Layer</button>
+        </div>
+    </div>
+
+    <script type="module">
+        // ===== COMMAND PATTERN FOR UNDO/REDO =====
+        class UndoManager {
+            constructor(stateManager) {
+                this.stateManager = stateManager;
+                this.undoStack = [];
+                this.redoStack = [];
+            }
+
+            addCommand(command) {
+                this.undoStack.push(command);
+                this.redoStack = [];
+                this.stateManager.notify();
+            }
+
+            undo() {
+                if (this.undoStack.length > 0) {
+                    const command = this.undoStack.pop();
+                    command.undo();
+                    this.redoStack.push(command);
+                    this.stateManager.notify();
+                }
+            }
+
+            redo() {
+                if (this.redoStack.length > 0) {
+                    const command = this.redoStack.pop();
+                    command.execute();
+                    this.undoStack.push(command);
+                    this.stateManager.notify();
+                }
+            }
+        }
+
+        class DrawCommand {
+            constructor(layer, before, after) {
+                this.layer = layer;
+                this.before = before;
+                this.after = after;
+            }
+
+            execute() {
+                this.layer.context.putImageData(this.after, 0, 0);
+            }
+
+            undo() {
+                this.layer.context.putImageData(this.before, 0, 0);
+            }
+        }
+
+        // ===== MODEL/STATE MANAGEMENT =====
+        class StateManager {
+            constructor() {
+                this.state = {
+                    layers: [],
+                    activeLayerId: null,
+                    currentTool: 'pencil',
+                    currentColor: '#ff0000',
+                    canvasDimensions: { width: 32, height: 32 },
+                };
+                this.subscribers = [];
+                this.undoManager = new UndoManager(this);
+            }
+
+            subscribe(callback) {
+                this.subscribers.push(callback);
+            }
+
+            notify() {
+                this.subscribers.forEach(callback => callback(this.state));
+            }
+
+            getState() {
+                return this.state;
+            }
+
+            addLayer() {
+                const id = Date.now();
+                const { width, height } = this.state.canvasDimensions;
+                try {
+                    const offscreenCanvas = new OffscreenCanvas(width, height);
+                    const context = offscreenCanvas.getContext('2d');
+                    if (!context) throw new Error('Could not get OffscreenCanvas context');
+                    const newLayer = {
+                        id,
+                        canvas: offscreenCanvas,
+                        context,
+                        visible: true,
+                        name: `Layer ${this.state.layers.length + 1}`
+                    };
+                    this.state.layers.push(newLayer);
+                    this.state.activeLayerId = id;
+                    this.notify();
+                } catch (e) {
+                    console.error("Failed to create new layer:", e);
+                    alert("Error: Could not create a new layer. Your browser might not support OffscreenCanvas.");
+                }
+            }
+            
+            deleteLayer(layerId) {
+                this.state.layers = this.state.layers.filter(l => l.id !== layerId);
+                if (this.state.activeLayerId === layerId) {
+                    this.state.activeLayerId = this.state.layers[this.state.layers.length - 1]?.id || null;
+                }
+                this.notify();
+            }
+
+            setActiveLayer(layerId) {
+                if (this.state.activeLayerId !== layerId) {
+                    this.state.activeLayerId = layerId;
+                    this.notify();
+                }
+            }
+            
+            setLayerVisibility(layerId, visible) {
+                const layer = this.state.layers.find(l => l.id === layerId);
+                if(layer && layer.visible !== visible) {
+                    layer.visible = visible;
+                    this.notify();
+                }
+            }
+            
+            reorderLayers(fromIndex, toIndex) {
+                const [movedLayer] = this.state.layers.splice(fromIndex, 1);
+                this.state.layers.splice(toIndex, 0, movedLayer);
+                this.notify();
+            }
+
+            changeTool(tool) {
+                this.state.currentTool = tool;
+                this.notify();
+            }
+
+            setColor(color) {
+                this.state.currentColor = color;
+                this.notify();
+            }
+        }
+
+        // ===== VIEW - CANVAS RENDERING =====
+        class CanvasManager {
+            constructor(stateManager) {
+                this.canvas = document.getElementById('main-canvas');
+                if (!this.canvas) throw new Error('Main canvas not found!');
+                this.ctx = this.canvas.getContext('2d');
+                if (!this.ctx) throw new Error('Could not get 2D context from main canvas.');
+                this.stateManager = stateManager;
+                this.stateManager.subscribe(() => this.render());
+            }
+
+            render() {
+                const { layers } = this.stateManager.getState();
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                this.drawCheckerboard();
+                this.ctx.imageSmoothingEnabled = false;
+
+                layers.slice().reverse().forEach(layer => {
+                    if (layer.visible) {
+                        this.ctx.drawImage(layer.canvas, 0, 0, this.canvas.width, this.canvas.height);
+                    }
+                });
+            }
+            
+            drawCheckerboard() {
+                const tileSize = 20;
+                for (let y = 0; y < this.canvas.height / tileSize; y++) {
+                    for (let x = 0; x < this.canvas.width / tileSize; x++) {
+                        this.ctx.fillStyle = (x + y) % 2 === 0 ? '#e0e0e0' : '#c0c0c0';
+                        this.ctx.fillRect(x * tileSize, y * tileSize, tileSize, tileSize);
+                    }
+                }
+            }
+        }
+
+        // ===== VIEW/CONTROLLER - UI MANAGEMENT =====
+        class UIManager {
+            constructor(stateManager) {
+                this.stateManager = stateManager;
+                this.stateManager.subscribe(state => this.render(state));
+                this.draggedIndex = null;
+                this.placeholder = this.createPlaceholder();
+                this.init();
+            }
+
+            init() {
+                this.setupToolButtons();
+                this.setupColorPicker();
+                this.setupLayerButtons();
+                this.setupHistoryButtons();
+                this.setupExportButton();
+                document.getElementById('layers-list').addEventListener('dragover', (e) => this.handleDragOver(e));
+                document.getElementById('layers-list').addEventListener('drop', (e) => this.handleDrop(e));
+            }
+            
+            createPlaceholder() {
+                const el = document.createElement('li');
+                el.className = 'layer-placeholder';
+                return el;
+            }
+
+            render({ currentTool, currentColor, layers, activeLayerId }) {
+                document.querySelectorAll('.tool-button').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.tool === currentTool);
+                });
+                document.getElementById('color-picker').value = this.rgbToHex(currentColor);
+
+                const layersList = document.getElementById('layers-list');
+                const existingLayerElements = new Map(Array.from(layersList.children).map(child => [parseInt(child.dataset.id), child]));
+
+                layers.forEach((layer, index) => {
+                    let item = existingLayerElements.get(layer.id);
+                    if (item) {
+                        item.classList.toggle('active', layer.id === activeLayerId);
+                        const checkbox = item.querySelector('input[type="checkbox"]');
+                        if (checkbox.checked !== layer.visible) {
+                            checkbox.checked = layer.visible;
+                        }
+                        existingLayerElements.delete(layer.id);
+                    } else {
+                        item = this.createLayerElement(layer);
+                    }
+                    
+                    if (layersList.children[index] !== item) {
+                        layersList.insertBefore(item, layersList.children[index]);
+                    }
+                });
+
+                existingLayerElements.forEach(el => el.remove());
+            }
+
+            createLayerElement(layer) {
+                const item = document.createElement('li');
+                item.className = 'layer-item';
+                item.dataset.id = layer.id;
+                item.draggable = true;
+                item.innerHTML = `
+                    <input type="checkbox" ${layer.visible ? 'checked' : ''}>
+                    <span>${layer.name}</span>
+                    <button class="delete-layer">X</button>
+                `;
+
+                item.addEventListener('click', () => this.stateManager.setActiveLayer(layer.id));
+                const checkbox = item.querySelector('input[type="checkbox"]');
+                checkbox.addEventListener('click', (e) => e.stopPropagation());
+                checkbox.addEventListener('change', (e) => this.stateManager.setLayerVisibility(layer.id, e.target.checked));
+                item.querySelector('.delete-layer').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    this.stateManager.deleteLayer(layer.id);
+                });
+
+                item.addEventListener('dragstart', (e) => this.handleDragStart(e, item));
+                item.addEventListener('dragend', () => this.handleDragEnd());
+                return item;
+            }
+            
+            handleDragStart(e, item) {
+                this.draggedItem = item;
+                this.draggedIndex = Array.from(item.parentElement.children).indexOf(item);
+                e.dataTransfer.effectAllowed = 'move';
+                setTimeout(() => item.classList.add('dragging'), 0);
+            }
+            
+            handleDragEnd() {
+                if (this.draggedItem) {
+                    this.draggedItem.classList.remove('dragging');
+                }
+                this.placeholder.remove();
+                this.draggedIndex = null;
+                this.draggedItem = null;
+            }
+
+            handleDragOver(e) {
+                e.preventDefault();
+                const list = document.getElementById('layers-list');
+                const afterElement = this.getDragAfterElement(list, e.clientY);
+                if (afterElement == null) {
+                    list.appendChild(this.placeholder);
+                } else {
+                    list.insertBefore(this.placeholder, afterElement);
+                }
+            }
+
+            handleDrop(e) {
+                e.preventDefault();
+                const list = document.getElementById('layers-list');
+                const toIndex = Array.from(list.children).indexOf(this.placeholder);
+                if (this.draggedIndex !== null && toIndex > -1) {
+                    this.stateManager.reorderLayers(this.draggedIndex, toIndex);
+                }
+            }
+            
+            getDragAfterElement(container, y) {
+                const draggableElements = [...container.querySelectorAll('.layer-item:not(.dragging)')];
+                for (const child of draggableElements) {
+                    const box = child.getBoundingClientRect();
+                    if (y < box.top + box.height / 2) {
+                        return child;
+                    }
+                }
+                return null;
+            }
+
+            setupToolButtons() {
+                document.querySelectorAll('.tool-button').forEach(button => {
+                    button.addEventListener('click', (e) => this.stateManager.changeTool(e.target.dataset.tool));
+                });
+            }
+
+            setupColorPicker() {
+                document.getElementById('color-picker').addEventListener('input', (e) => this.stateManager.setColor(e.target.value));
+            }
+
+            setupLayerButtons() {
+                document.getElementById('add-layer-btn').addEventListener('click', () => this.stateManager.addLayer());
+            }
+            
+            setupHistoryButtons() {
+                document.getElementById('undo-btn').addEventListener('click', () => this.stateManager.undoManager.undo());
+                document.getElementById('redo-btn').addEventListener('click', () => this.stateManager.undoManager.redo());
+            }
+            
+            setupExportButton() {
+                 document.getElementById('export-btn').addEventListener('click', () => this.exportImage());
+            }
+            
+            exportImage() {
+                const { layers, canvasDimensions } = this.stateManager.getState();
+                const exportCanvas = new OffscreenCanvas(canvasDimensions.width, canvasDimensions.height);
+                const exportCtx = exportCanvas.getContext('2d');
+
+                layers.slice().reverse().forEach(layer => {
+                    if (layer.visible) {
+                        exportCtx.drawImage(layer.canvas, 0, 0);
+                    }
+                });
+
+                exportCanvas.convertToBlob({ type: 'image/png' }).then(blob => {
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'pixel-art.png';
+                    a.click();
+                    URL.revokeObjectURL(url);
+                });
+            }
+            
+            rgbToHex(rgbString) {
+                if (typeof rgbString !== 'string') return '#000000';
+                if (rgbString.startsWith('#')) return rgbString;
+                const match = rgbString.match(/rgba?\((\d+), (\d+), (\d+)/);
+                if (!match) return '#000000';
+                const [, r, g, b] = match.map(Number);
+                return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+            }
+        }
+        
+        // ===== CONTROLLER - USER INPUT ON CANVAS =====
+        class CanvasController {
+            constructor(stateManager) {
+                this.canvas = document.getElementById('main-canvas');
+                this.stateManager = stateManager;
+                this.isDrawing = false;
+                this.beforeState = null;
+                this.init();
+            }
+            
+            init() {
+                this.canvas.addEventListener('mousedown', this.handleMouseDown.bind(this));
+                this.canvas.addEventListener('mousemove', this.handleMouseMove.bind(this));
+                this.canvas.addEventListener('mouseup', this.handleMouseUp.bind(this));
+                this.canvas.addEventListener('mouseleave', this.handleMouseUp.bind(this));
+            }
+            
+            getMousePos(evt) {
+                const { canvasDimensions } = this.stateManager.getState();
+                const rect = this.canvas.getBoundingClientRect();
+                const scaleX = this.canvas.width / rect.width;
+                const scaleY = this.canvas.height / rect.height;
+                const x = (evt.clientX - rect.left) * scaleX;
+                const y = (evt.clientY - rect.top) * scaleY;
+                const pixelX = Math.floor(x / (this.canvas.width / canvasDimensions.width));
+                const pixelY = Math.floor(y / (this.canvas.height / canvasDimensions.height));
+                return { x: pixelX, y: pixelY };
+            }
+
+            handleMouseDown(e) {
+                const { layers, activeLayerId } = this.stateManager.getState();
+                const activeLayer = layers.find(l => l.id === activeLayerId);
+                if (!activeLayer) return;
+
+                this.isDrawing = true;
+                const pos = this.getMousePos(e);
+                
+                this.beforeState = activeLayer.context.getImageData(0, 0, 32, 32);
+                this.useTool(pos.x, pos.y);
+            }
+
+            handleMouseMove(e) {
+                if (!this.isDrawing) return;
+                const pos = this.getMousePos(e);
+                this.useTool(pos.x, pos.y);
+            }
+
+            handleMouseUp() {
+                if (this.isDrawing && this.beforeState) {
+                    const { layers, activeLayerId } = this.stateManager.getState();
+                    const activeLayer = layers.find(l => l.id === activeLayerId);
+                    if(activeLayer) {
+                        const afterState = activeLayer.context.getImageData(0, 0, 32, 32);
+                        const command = new DrawCommand(activeLayer, this.beforeState, afterState);
+                        this.stateManager.undoManager.addCommand(command);
+                    }
+                }
+                this.isDrawing = false;
+                this.beforeState = null;
+            }
+            
+            useTool(x, y) {
+                const { layers, activeLayerId, currentTool, currentColor } = this.stateManager.getState();
+                const activeLayer = layers.find(l => l.id === activeLayerId);
+                if (!activeLayer) return;
+
+                switch (currentTool) {
+                    case 'pencil':
+                        this.drawPixel(activeLayer.context, x, y, currentColor);
+                        break;
+                    case 'eraser':
+                        this.erasePixel(activeLayer.context, x, y);
+                        break;
+                    case 'fill':
+                        this.fill(activeLayer, x, y, currentColor);
+                        break;
+                    case 'eyedropper':
+                        this.eyedrop(activeLayer.context, x, y);
+                        break;
+                }
+                this.stateManager.notify();
+            }
+            
+            drawPixel(ctx, x, y, color) {
+                ctx.fillStyle = color;
+                ctx.fillRect(x, y, 1, 1);
+            }
+
+            erasePixel(ctx, x, y) {
+                ctx.clearRect(x, y, 1, 1);
+            }
+            
+            eyedrop(ctx, x, y) {
+                const pixelData = ctx.getImageData(x, y, 1, 1).data;
+                if (pixelData[3] === 0) return;
+                const color = `rgba(${pixelData[0]}, ${pixelData[1]}, ${pixelData[2]}, ${pixelData[3] / 255})`;
+                this.stateManager.setColor(color);
+            }
+            
+            fill(layer, startX, startY, fillColorHex) {
+                const { context, canvas } = layer;
+                const targetColor = context.getImageData(startX, startY, 1, 1).data;
+                const fillColor = this.hexToRgba(fillColorHex);
+
+                if (this.areColorsEqual(targetColor, fillColor)) return;
+
+                const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+                const visited = new Uint8Array(imageData.width * imageData.height);
+                const stack = [[startX, startY]];
+
+                while (stack.length) {
+                    const [x, y] = stack.pop();
+                    const index = (y * imageData.width + x);
+
+                    if (visited[index]) continue;
+                    visited[index] = 1;
+
+                    const currentIndex = index * 4;
+                    const currentColor = imageData.data.slice(currentIndex, currentIndex + 4);
+
+                    if (this.areColorsEqual(currentColor, targetColor)) {
+                        imageData.data[currentIndex] = fillColor[0];
+                        imageData.data[currentIndex + 1] = fillColor[1];
+                        imageData.data[currentIndex + 2] = fillColor[2];
+                        imageData.data[currentIndex + 3] = fillColor[3];
+
+                        if (x > 0) stack.push([x - 1, y]);
+                        if (x < imageData.width - 1) stack.push([x + 1, y]);
+                        if (y > 0) stack.push([x, y - 1]);
+                        if (y < imageData.height - 1) stack.push([x, y + 1]);
+                    }
+                }
+                context.putImageData(imageData, 0, 0);
+            }
+            
+            hexToRgba(hex) {
+                if (typeof hex !== 'string') return [0,0,0,255];
+                if(hex.startsWith('#')){
+                    let c = hex.substring(1).split('');
+                    if(c.length== 3){
+                        c= [c[0], c[0], c[1], c[1], c[2], c[2]];
+                    }
+                    c= '0x'+c.join('');
+                    return [(c>>16)&255, (c>>8)&255, c&255, 255];
+                }
+                 if (hex.startsWith('rgba')) {
+                    const match = hex.match(/rgba?\((\d+), (\d+), (\d+),? ?([\d\.]+)?\)/);
+                    if (match) {
+                        return [parseInt(match[1]), parseInt(match[2]), parseInt(match[3]), match[4] ? Math.round(parseFloat(match[4]) * 255) : 255];
+                    }
+                }
+                return [0,0,0,255]; // Default
+            }
+
+            areColorsEqual(color1, color2) {
+                return color1[0] === color2[0] && color1[1] === color2[1] && color1[2] === color2[2] && color1[3] === color2[3];
+            }
+        }
+
+        // ===== APP INITIALIZATION =====
+        class App {
+            constructor() {
+                try {
+                    this.stateManager = new StateManager();
+                    this.canvasManager = new CanvasManager(this.stateManager);
+                    this.uiManager = new UIManager(this.stateManager);
+                    this.canvasController = new CanvasController(this.stateManager);
+                    
+                    this.stateManager.addLayer();
+                } catch (error) {
+                    console.error("Failed to initialize the application:", error);
+                    document.body.innerHTML = `<div style="color: red; text-align: center; padding: 20px;"><h2>Application Error</h2><p>${error.message}</p></div>`;
+                }
+            }
+        }
+
+        new App();
+
+    </script>
+</body>
+</html>

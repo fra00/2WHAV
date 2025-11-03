@@ -1,0 +1,17 @@
+{
+  "name": "pixel-art-editor-tests",
+  "version": "1.0.0",
+  "description": "Tests for the pixel art editor",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "chai": "^4.3.4",
+    "mocha": "^9.1.3",
+    "puppeteer": "^10.4.0"
+  }
+}

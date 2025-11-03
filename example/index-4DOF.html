@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4-DOF Robot Arm IK</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+        .info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="info" id="info">Error: N/A</div>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://unpkg.com/three@0.164.1/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.164.1/examples/jsm/"
+        }
+    }
+    </script>
+
+    <script type="module">
+        import * as THREE from 'three';
+        import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+        import { GUI } from 'https://unpkg.com/dat.gui@0.7.9/build/dat.gui.module.js';
+
+        // ===== 1. SCENE SETUP =====
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        camera.position.set(20, 20, 50);
+        
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+
+        // Lights
+        const ambientLight = new THREE.AmbientLight(0x404040, 2);
+        scene.add(ambientLight);
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 2.5);
+        directionalLight.position.set(10, 15, 20);
+        scene.add(directionalLight);
+
+        // Helpers
+        const axesHelper = new THREE.AxesHelper(15);
+        scene.add(axesHelper);
+        const gridHelper = new THREE.GridHelper(100, 20);
+        scene.add(gridHelper);
+
+        // ===== 2. ROBOT ARM CLASS =====
+        class RobotArm {
+            constructor(segmentLengths) {
+                this.segmentLengths = segmentLengths;
+                this.numSegments = segmentLengths.length;
+                this.joints = []; // Will hold Object3D pivots
+                this.segments = []; // Will hold Mesh objects
+
+                this.base = new THREE.Group();
+                scene.add(this.base);
+
+                let parent = this.base;
+
+                for (let i = 0; i < this.numSegments; i++) {
+                    const length = this.segmentLengths[i];
+                    
+                    // Create a pivot for the joint
+                    const joint = new THREE.Object3D();
+                    joint.position.y = i === 0 ? 0 : this.segmentLengths[i-1];
+                    parent.add(joint);
+
+                    // Create the segment mesh
+                    const geometry = new THREE.CylinderGeometry(1, 1, length, 16);
+                    const material = new THREE.MeshStandardMaterial({ 
+                        color: new THREE.Color(0xffffff).setHSL(i / this.numSegments, 0.8, 0.6) 
+                    });
+                    const segment = new THREE.Mesh(geometry, material);
+                    segment.position.y = length / 2; // Position relative to the joint
+                    joint.add(segment);
+                    
+                    this.joints.push(joint);
+                    this.segments.push(segment);
+
+                    parent = joint;
+                }
+            }
+
+            getEndEffectorPosition() {
+                const endEffector = this.segments[this.numSegments - 1];
+                const position = new THREE.Vector3();
+                endEffector.getWorldPosition(position);
+                // Get the very tip of the last segment
+                const tipOffset = new THREE.Vector3(0, this.segmentLengths[this.numSegments - 1] / 2, 0);
+                tipOffset.applyQuaternion(endEffector.getWorldQuaternion(new THREE.Quaternion()));
+                position.add(tipOffset);
+                return position;
+            }
+
+            // This method is not strictly needed if IK solver directly manipulates joints
+            // but can be useful for forward kinematics.
+            setJointAngles(angles) {
+                this.joints.forEach((joint, i) => {
+                    if (angles[i]) {
+                        joint.rotation.set(angles[i].x, angles[i].y, angles[i].z);
+                    }
+                });
+            }
+        }
+
+        // ===== 3. IK SOLVER (CCD) =====
+        class IKSolver {
+            constructor(maxIterations = 10, tolerance = 0.1) {
+                this.maxIterations = maxIterations;
+                this.tolerance = tolerance;
+            }
+
+            solve(arm, targetPosition) {
+                let converged = false;
+                let error = Infinity;
+
+                for (let iter = 0; iter < this.maxIterations; iter++) {
+                    for (let i = arm.numSegments - 1; i >= 0; i--) {
+                        const joint = arm.joints[i];
+                        
+                        // Reverted: Calculate EE position inside the loop for correctness
+                        const endEffectorPosition = arm.getEndEffectorPosition();
+
+                        const jointPosition = new THREE.Vector3();
+                        joint.getWorldPosition(jointPosition);
+
+                        const toEndEffector = new THREE.Vector3().subVectors(endEffectorPosition, jointPosition);
+                        const toTarget = new THREE.Vector3().subVectors(targetPosition, jointPosition);
+
+                        // Keep NaN Fix: Check for alignment before calculating rotation
+                        const dot = toEndEffector.clone().normalize().dot(toTarget.clone().normalize());
+                        if (dot > 0.99999) {
+                            continue;
+                        }
+
+                        const rotationAxis = new THREE.Vector3().crossVectors(toEndEffector, toTarget).normalize();
+                        const angle = Math.acos(toEndEffector.normalize().dot(toTarget.normalize()));
+
+                        const quaternion = new THREE.Quaternion().setFromAxisAngle(rotationAxis, angle);
+                        joint.quaternion.multiply(quaternion);
+                    }
+
+                    error = arm.getEndEffectorPosition().distanceTo(targetPosition);
+                    if (error < this.tolerance) {
+                        converged = true;
+                        break;
+                    }
+                }
+                return { converged, error };
+            }
+        }
+
+        // ===== 4. INITIALIZATION =====
+        const arm = new RobotArm([10, 9, 8, 7]);
+        const ikSolver = new IKSolver();
+
+        // Target visualization
+        const targetGeometry = new THREE.SphereGeometry(0.8, 16, 16);
+        const targetMaterial = new THREE.MeshStandardMaterial({ color: 0x00ff00, transparent: true, opacity: 0.7 });
+        const targetSphere = new THREE.Mesh(targetGeometry, targetMaterial);
+        scene.add(targetSphere);
+
+        const ikTarget = {
+            x: 15,
+            y: 15,
+            z: 0
+        };
+        targetSphere.position.set(ikTarget.x, ikTarget.y, ikTarget.z);
+
+        // UI
+        const gui = new GUI();
+        gui.add(ikTarget, 'x', -40, 40).name('Target X');
+        gui.add(ikTarget, 'y', 0, 40).name('Target Y');
+        gui.add(ikTarget, 'z', -40, 40).name('Target Z');
+        
+        const infoElement = document.getElementById('info');
+
+        // ===== 5. ANIMATION LOOP =====
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Update target sphere position
+            targetSphere.position.set(ikTarget.x, ikTarget.y, ikTarget.z);
+            
+            // Solve IK
+            const targetVector = new THREE.Vector3(ikTarget.x, ikTarget.y, ikTarget.z);
+            const result = ikSolver.solve(arm, targetVector);
+
+            // Update info
+            infoElement.textContent = `Error: ${result.error.toFixed(3)} | Converged: ${result.converged}`;
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        animate();
+
+    </script>
+</body>
+</html>

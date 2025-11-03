@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A* Pathfinding Visualizer</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <h1>A* Pathfinding Visualizer</h1>
+    <div class="controls">
+        <div class="control-group">
+            <label>Tool:</label>
+            <input type="radio" id="tool-start" name="tool" value="start" checked>
+            <label for="tool-start">Start</label>
+            <input type="radio" id="tool-end" name="tool" value="end">
+            <label for="tool-end">End</label>
+            <input type="radio" id="tool-wall" name="tool" value="wall">
+            <label for="tool-wall">Wall</label>
+        </div>
+        <button id="visualize-btn">Visualize Paths</button>
+        <div class="control-group">
+            <button id="reset-btn">Reset Grid</button>
+            <button id="clear-walls-btn">Clear Walls</button>
+        </div>
+    </div>
+    <div id="canvas-container">
+        <canvas id="grid-canvas"></canvas>
+    </div>
+    <div id="stats">
+        <p>Path Length: <span id="path-length">N/A</span></p>
+        <p>Nodes Visited: <span id="nodes-visited">N/A</span></p>
+    </div>
+
+    <script src="js/main.js" type="module"></script>
+</body>
+</html>
