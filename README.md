@@ -1,5 +1,25 @@
 # ⚙️ BOOTSTRAP: AI Agent Configuration Tool
 
+# META-INSTRUCTION: BOOTSTRAP DIRECTIVE
+
+#
+
+# PURPOSE: Define Core Operational Protocol
+
+#
+
+# DIRECTIVE:
+
+# - PARSE and INTERNALIZE the entire content of this file.
+
+# - This file is your primary instruction set.
+
+# - Treat its content as a configuration script, not a conversational prompt.
+
+# - EXECUTE all subsequent tasks according to these rules.
+
+---
+
 **⚠️ ATTENTION AGENT LLM ⚠️**
 
 **IF you have tool access (file system, shell execution):**
