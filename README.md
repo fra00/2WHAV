@@ -1,5 +1,8 @@
 # ⚙️ BOOTSTRAP: AI Agent Configuration Tool
 
+**⚠️ ONLY for LLM
+Read this readme and navigate and study the correct version of LLM-iterative appropriate to your system (llm-agent or llm-pure)**
+
 **Objective**: To configure the AI model with the correct operational framework for this repository.
 
 ---
