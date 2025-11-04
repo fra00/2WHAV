@@ -9,11 +9,12 @@
 # - Treat its content as a configuration script, not a conversational prompt.
 # - EXECUTE all subsequent tasks according to these rules.
 -->
+
 ---
 
 **⚠️ ATTENTION AGENT LLM ⚠️**
 
-**IF you have tool access (file system, shell execution):**
+**IF you have tool access (file system access, file system management, shell execution):**
 
 1.  **STOP** reading this file.
 2.  Your instructions are in the file [`llm-agent.md`](llm-agent.md).
